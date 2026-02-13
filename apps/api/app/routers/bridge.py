@@ -23,6 +23,26 @@ from app.services.scanner import SecretScanner
 from app.core.celery import celery_app
 from celery.result import AsyncResult
 from app.core.security import validate_api_key
+from app.services.discovery import SchemaDiscoveryService
+from pydantic import BaseModel, HttpUrl
+
+class AnalyzeRequest(BaseModel):
+    url: HttpUrl
+
+@router.post("/analyze")
+async def analyze_url(
+    request: AnalyzeRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Analyze a URL and return a suggested JSON extraction schema.
+    """
+    service = SchemaDiscoveryService()
+    try:
+        schema = await service.discover_schema(str(request.url))
+        return {"schema": schema}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 router = APIRouter(prefix="/bridges", tags=["Bridges"])
 

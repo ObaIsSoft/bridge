@@ -156,7 +156,24 @@ Suggested Fields:
                             </div>
                             <button
                                 type="button"
-                                className="w-full py-2 bg-primary text-primary-foreground rounded-md font-bold text-[10px] shadow-sm">
+                                onClick={async () => {
+                                    if (!formData.target_url) {
+                                        toast.error("Please enter a Target URL first");
+                                        return;
+                                    }
+                                    const toastId = toast.loading("Analyzing page structure...");
+                                    try {
+                                        const result = await bridgesApi.analyze(formData.target_url);
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            extraction_schema: JSON.stringify(result.schema, null, 2)
+                                        }));
+                                        toast.success("Schema auto-detected!", { id: toastId });
+                                    } catch (err: any) {
+                                        toast.error("Failed to analyze URL: " + (err.response?.data?.detail || err.message), { id: toastId });
+                                    }
+                                }}
+                                className="w-full py-2 bg-primary text-primary-foreground rounded-md font-bold text-[10px] shadow-sm hover:bg-primary/90 transition-colors">
                                 AUTO-FILL SCHEMA
                             </button>
                         </div>
