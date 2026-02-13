@@ -23,7 +23,7 @@ class ApiKey(Base):
     __tablename__ = "api_keys"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", on_delete="CASCADE"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
     key_hash = Column(String(64), unique=True, nullable=False)
     prefix = Column(String(12), nullable=False)
     last_four = Column(String(4), nullable=False)
@@ -40,7 +40,7 @@ class Bridge(Base):
     __tablename__ = "bridges"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", on_delete="CASCADE"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
     name = Column(String(255), nullable=False)
     domain = Column(String(255), nullable=False)
     target_url = Column(Text, nullable=False)
@@ -59,9 +59,9 @@ class UsageLog(Base):
     __tablename__ = "usage_logs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", on_delete="CASCADE"))
-    bridge_id = Column(UUID(as_uuid=True), ForeignKey("bridges.id", on_delete="CASCADE"), nullable=True)
-    api_key_id = Column(UUID(as_uuid=True), ForeignKey("api_keys.id", on_delete="SET NULL"), nullable=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
+    bridge_id = Column(UUID(as_uuid=True), ForeignKey("bridges.id", ondelete="CASCADE"), nullable=True)
+    api_key_id = Column(UUID(as_uuid=True), ForeignKey("api_keys.id", ondelete="SET NULL"), nullable=True)
     
     method = Column(String(10), nullable=False)
     path = Column(String(500), nullable=False)
@@ -77,7 +77,7 @@ class Webhook(Base):
     __tablename__ = "webhooks"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", on_delete="CASCADE"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
     url = Column(String(500), nullable=False)
     name = Column(String(255), default="Default Webhook")
     secret = Column(String(255), nullable=True) # For signing requests
@@ -92,7 +92,7 @@ class WebhookLog(Base):
     __tablename__ = "webhook_logs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    webhook_id = Column(UUID(as_uuid=True), ForeignKey("webhooks.id", on_delete="CASCADE"))
+    webhook_id = Column(UUID(as_uuid=True), ForeignKey("webhooks.id", ondelete="CASCADE"))
     event_type = Column(String(100), nullable=False)
     payload = Column(JSON, nullable=False)
     status_code = Column(Integer, nullable=True)

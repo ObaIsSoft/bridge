@@ -37,38 +37,64 @@ async def list_bridges(
 async def get_dashboard_stats(
     db: AsyncSession = Depends(get_db)
 ):
+    from datetime import timedelta
+    now = datetime.utcnow()
+    day_ago = now - timedelta(days=1)
+    two_days_ago = now - timedelta(days=2)
+
     # Total Active Bridges
     result = await db.execute(select(Bridge).where(Bridge.status == "active"))
     active_bridges = len(result.scalars().all())
     
-    # Total Extractions and Success Rate from UsageLogs
+    # Yesterday's active bridges (for change calculation, though usually stable)
+    result_old = await db.execute(select(Bridge).where(Bridge.created_at <= day_ago, Bridge.status == "active"))
+    old_active_bridges = len(result_old.scalars().all())
+    bridge_change = active_bridges - old_active_bridges
+    
+    # Total Extractions and Success Rate (Last 24h)
+    async def get_metrics(start, end):
+        total = (await db.execute(
+            select(func.count(UsageLog.id)).where(UsageLog.created_at >= start, UsageLog.created_at < end)
+        )).scalar() or 0
+        success = (await db.execute(
+            select(func.count(UsageLog.id)).where(
+                UsageLog.created_at >= start, 
+                UsageLog.created_at < end,
+                UsageLog.status_code >= 200, 
+                UsageLog.status_code < 300
+            )
+        )).scalar() or 0
+        rate = (success / total * 100) if total > 0 else 100.0
+        # Mock data volume based on extractions for now (150KB per)
+        volume = total * 0.15 
+        return total, rate, volume
+
+    curr_total, curr_rate, curr_vol = await get_metrics(day_ago, now)
+    prev_total, prev_rate, prev_vol = await get_metrics(two_days_ago, day_ago)
+
+    rate_change = curr_rate - prev_rate
+    vol_change = ((curr_vol - prev_vol) / prev_vol * 100) if prev_vol > 0 else 0
+
+    # Overall totals for the UI cards
     total_result = await db.execute(select(func.count(UsageLog.id)))
-    total_extractions = total_result.scalar() or 0
+    total_all_time = total_result.scalar() or 0
     
-    success_result = await db.execute(
-        select(func.count(UsageLog.id)).where(UsageLog.status_code >= 200, UsageLog.status_code < 300)
-    )
-    successful_extractions = success_result.scalar() or 0
-    success_rate = (successful_extractions / total_extractions * 100) if total_extractions > 0 else 100.0
-    
-    # Average Latency
     latency_result = await db.execute(select(func.avg(UsageLog.latency_ms)))
     avg_latency = round(latency_result.scalar() or 0)
     
-    # Calculate total data size (if column exists, else mock for now to keep UI alive with real-ish data)
-    # result = await db.execute(select(func.sum(UsageLog.data_size_bytes)))
-    # total_data_bytes = result.scalar() or 0
-    total_data_mb = round((total_extractions * 0.15), 2) # Mocking 150KB per extraction for now
-    
-    usage_percent = min(100, int((total_extractions / 10000) * 100))
+    total_data_mb = round((total_all_time * 0.15), 2)
+    usage_percent = min(100, int((total_all_time / 10000) * 100))
     
     return {
         "active_bridges": active_bridges,
-        "total_extractions": total_extractions,
+        "active_bridges_change": f"+{bridge_change}" if bridge_change >= 0 else f"{bridge_change}",
+        "total_extractions": total_all_time,
         "api_usage_percent": usage_percent,
-        "success_rate": f"{round(success_rate, 1)}%",
+        "success_rate": f"{round(curr_rate, 1)}%",
+        "success_rate_change": f"{'+' if rate_change >= 0 else ''}{round(rate_change, 1)}%",
         "avg_latency": f"{avg_latency}ms",
-        "total_data_volume": f"{total_data_mb} MB"
+        "total_data_volume": f"{total_data_mb} MB",
+        "total_data_volume_change": f"{'+' if vol_change >= 0 else ''}{round(vol_change, 1)}%"
     }
 
 @router.get("/security/pulse")

@@ -27,9 +27,27 @@ export default function DashboardPage() {
     }, []);
 
     const statsConfig = [
-        { name: 'Active Bridges', value: stats?.active_bridges ?? '0', icon: ToyBrick, change: '+2', changeType: 'increase' },
-        { name: 'Success Rate', value: stats?.success_rate ?? '100%', icon: Activity, change: '+0.4%', changeType: 'increase' },
-        { name: 'Total Data', value: stats?.total_data_volume ?? '0 MB', icon: Key, change: '-3%', changeType: 'decrease' },
+        {
+            name: 'Active Bridges',
+            value: stats?.active_bridges ?? '0',
+            icon: ToyBrick,
+            change: stats?.active_bridges_change ?? '+0',
+            changeType: (stats?.active_bridges_change?.startsWith('-')) ? 'decrease' : 'increase'
+        },
+        {
+            name: 'Success Rate',
+            value: stats?.success_rate ?? '0%',
+            icon: Activity,
+            change: stats?.success_rate_change ?? '+0%',
+            changeType: (stats?.success_rate_change?.startsWith('-')) ? 'decrease' : 'increase'
+        },
+        {
+            name: 'Total Data',
+            value: stats?.total_data_volume ?? '0 MB',
+            icon: Key,
+            change: stats?.total_data_volume_change ?? '+0%',
+            changeType: (stats?.total_data_volume_change?.startsWith('-')) ? 'decrease' : 'increase'
+        },
     ];
 
     return (
