@@ -9,7 +9,7 @@ export default function MCPPage() {
     const configSnippet = `{
   "mcpServers": {
     "api-bridge": {
-      "command": "python3",
+      "command": "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/bridge-mcp-server-HonHq3Ue-py3.13/bin/python",
       "args": [
         "${process.env.NEXT_PUBLIC_API_BRIDGE_PATH || "/Users/obafemi/bridge"}/apps/mcp-server/main.py"
       ],
