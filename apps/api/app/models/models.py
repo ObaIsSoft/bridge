@@ -101,3 +101,15 @@ class WebhookLog(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     webhook = relationship("Webhook", back_populates="logs")
+
+class DomainPermission(Base):
+    __tablename__ = "domain_permissions"
+
+    domain = Column(String(255), primary_key=True)
+    status = Column(String(20), nullable=False) # ALLOWED, RESTRICTED, DENIED
+    robots_txt = Column(Text, nullable=True)
+    security_txt = Column(Text, nullable=True)
+    contact_email = Column(String(255), nullable=True)
+    crawl_delay = Column(Integer, default=1) # Seconds
+    last_checked = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)

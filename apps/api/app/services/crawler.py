@@ -4,9 +4,19 @@ from typing import List, Dict, Any, Optional
 import json
 logger = logging.getLogger(__name__)
 
+from app.services.permissions import PermissionService
+from app.core.database import AsyncSessionLocal
+
 class CrawlerService:
     async def get_page_content(self, url: str) -> Optional[str]:
         """Fetch rendered HTML from a URL using Playwright"""
+        # 1. Check Permissions
+        async with AsyncSessionLocal() as db:
+            perms = PermissionService()
+            if not await perms.check_access(url, db):
+                logger.warning(f"Crawling blocked for {url} by PermissionService")
+                raise Exception("Access Denied by robots.txt or platform policy")
+
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
             try:
