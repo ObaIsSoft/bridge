@@ -14,15 +14,18 @@ import { bridgesApi } from '@/lib/api';
 export default function DashboardPage() {
     const [stats, setStats] = useState<any>(null);
     const [pulse, setPulse] = useState<any>(null);
+    const [bridges, setBridges] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         Promise.all([
             bridgesApi.getStats(),
-            bridgesApi.getSecurityPulse()
-        ]).then(([statsData, pulseData]) => {
+            bridgesApi.getSecurityPulse(),
+            bridgesApi.list()
+        ]).then(([statsData, pulseData, bridgesData]) => {
             setStats(statsData);
             setPulse(pulseData);
+            setBridges(bridgesData);
         }).finally(() => setLoading(false));
     }, []);
 
@@ -62,7 +65,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-3">
                     <div className="hidden md:flex flex-col items-end mr-2">
                         <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Global Status</span>
-                        <span className="text-xs text-zinc-400">All Nodes Operational</span>
+                        <span className="text-xs text-zinc-400">{stats ? 'Node Cluster Online' : 'Connecting...'}</span>
                     </div>
                     <Link
                         href="/bridges/new"
@@ -116,12 +119,32 @@ export default function DashboardPage() {
                             <div className="p-8 space-y-4">
                                 {[1, 2].map(i => <div key={i} className="h-16 w-full bg-white/5 animate-pulse rounded-2xl" />)}
                             </div>
-                        ) : stats?.active_bridges > 0 ? (
-                            <div className="p-8 space-y-4">
-                                <p className="text-zinc-400 text-sm">Monitoring {stats.active_bridges} node cluster...</p>
-                                <div className="h-40 w-full bg-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-                                    <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Real-time Telemetry Stream Engaged</span>
-                                </div>
+                        ) : bridges.length > 0 ? (
+                            <div className="p-4 space-y-2">
+                                {bridges.slice(0, 3).map((bridge: any) => (
+                                    <div key={bridge.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                            <div>
+                                                <p className="text-sm font-bold text-white">{bridge.name}</p>
+                                                <p className="text-[10px] text-zinc-500 uppercase tracking-widest">{bridge.domain}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-black text-primary uppercase">{bridge.status}</p>
+                                            <p className="text-[10px] text-zinc-600 font-mono italic">
+                                                {bridge.last_successful_extraction ? new Date(bridge.last_successful_extraction).toLocaleTimeString() : 'No activity'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                                {bridges.length > 3 && (
+                                    <div className="px-4 py-2">
+                                        <p className="text-[10px] text-zinc-600 uppercase font-black tracking-widest">
+                                            + {bridges.length - 3} more nodes operational
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-20 text-center rounded-[2.5rem]">
