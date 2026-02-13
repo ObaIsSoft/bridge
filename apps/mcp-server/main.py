@@ -22,8 +22,7 @@ async def fetch_bridges() -> List[Dict[str, Any]]:
     async with httpx.AsyncClient() as client:
         try:
             # We'll use the existing /bridges endpoint
-            # In a real app, we might have a specific /mcp/tools endpoint
-            response = await client.get(f"{API_URL}/bridges/", headers=headers, timeout=10.0)
+            response = await client.get(f"{API_URL}/api/v1/bridges/", headers=headers, timeout=10.0)
             response.raise_for_status()
             return response.json()
         except Exception as e:
@@ -52,7 +51,7 @@ async def extract_data_from_bridge(bridge_id: str) -> Dict[str, Any]:
     async with httpx.AsyncClient() as client:
         try:
             # Trigger the extraction (now async, returns a task_id)
-            extract_url = f"{API_URL}/bridges/{bridge_id}/extract"
+            extract_url = f"{API_URL}/api/v1/bridges/{bridge_id}/extract"
             response = await client.post(extract_url, headers=headers, timeout=30.0)
             response.raise_for_status()
             task_data = response.json()
@@ -64,7 +63,7 @@ async def extract_data_from_bridge(bridge_id: str) -> Dict[str, Any]:
             # Poll for results
             for _ in range(20): # 20 attempts, 1s interval
                 await asyncio.sleep(1)
-                status_url = f"{API_URL}/bridges/tasks/{task_id}"
+                status_url = f"{API_URL}/api/v1/bridges/tasks/{task_id}"
                 status_res = await client.get(status_url, headers=headers)
                 status_res.raise_for_status()
                 status_data = status_res.json()

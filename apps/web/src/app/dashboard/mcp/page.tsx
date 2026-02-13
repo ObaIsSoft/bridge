@@ -14,7 +14,8 @@ export default function MCPPage() {
         "${process.env.NEXT_PUBLIC_API_BRIDGE_PATH || "/Users/obafemi/bridge"}/apps/mcp-server/main.py"
       ],
       "env": {
-        "API_URL": "http://localhost:8000"
+        "API_URL": "http://localhost:8000",
+        "BRIDGE_API_KEY": "YOUR_API_KEY_HERE"
       }
     }
   }
@@ -55,13 +56,16 @@ export default function MCPPage() {
                             1. Ensure you have the <span className="text-white font-medium">MCP SDK</span> installed in your Python environment.
                         </p>
                         <p className="text-sm text-zinc-400 leading-relaxed">
-                            2. Open your <span className="text-white font-medium">Claude Desktop Config</span> file (Settings &gt; Developer &gt; Edit Config).
+                            2. Generate an <span className="text-white font-medium">API Key</span> from the keys page.
                         </p>
                         <p className="text-sm text-zinc-400 leading-relaxed">
-                            3. Paste the configuration snippet on the right into your <span className="code text-amber-400 bg-amber-400/10 px-1 rounded">mcpServers</span> list.
+                            3. Open your <span className="text-white font-medium">Claude Desktop Config</span> file (Settings &gt; Developer &gt; Edit Config).
                         </p>
                         <p className="text-sm text-zinc-400 leading-relaxed">
-                            4. Restart Claude Desktop.
+                            4. Paste the configuration snippet on the right, ensuring you replace <span className="text-amber-400 font-mono">YOUR_API_KEY_HERE</span>.
+                        </p>
+                        <p className="text-sm text-zinc-400 leading-relaxed">
+                            5. Restart Claude Desktop.
                         </p>
                     </div>
                     <div className="pt-4">
