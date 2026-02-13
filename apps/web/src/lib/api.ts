@@ -29,6 +29,10 @@ export const bridgesApi = {
         body: JSON.stringify(data),
     }),
     delete: (id: string) => apiFetch(`/bridges/${id}`, { method: 'DELETE' }),
+    analyze: (url: string) => apiFetch('/bridges/analyze', {
+        method: 'POST',
+        body: JSON.stringify({ url }),
+    }),
     run: (id: string) => apiFetch(`/bridges/${id}/extract`, { method: 'POST' }),
     getLogs: (id: string) => apiFetch(`/bridges/${id}/logs`),
     getAllLogs: () => apiFetch('/bridges/logs'),
