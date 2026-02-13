@@ -3,7 +3,7 @@ import httpx
 import logging
 import re
 from datetime import datetime, timedelta
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models import DomainPermission
@@ -70,13 +70,14 @@ class PermissionService:
         from urllib.parse import urlparse
         return urlparse(url).netloc
 
-    async def _fetch_permissions(self, domain: str) -> Tuple[bool, int, Optional[str], Optional[str], Optional[str]]:
+    async def _fetch_permissions(self, domain: str) -> Tuple[bool, int, Optional[str], Optional[str], Optional[str], Dict[str, Optional[str]]]:
         robots_url = f"https://{domain}/robots.txt"
         security_url = f"https://{domain}/.well-known/security.txt"
         
         is_allowed = True
         crawl_delay = 1
         contact = None
+        socials = {"twitter": None, "github": None, "linkedin": None}
         robots_content = None
         security_content = None
 
@@ -113,5 +114,63 @@ class PermissionService:
                         contact = match.group(1).strip()
             except Exception as e:
                 logger.warning(f"Failed to fetch security.txt for {domain}: {e}")
+
+            # C. Homepage Fallback
+            if not contact:
+                try:
+                    # Use Playwright for robust JS execution and link extraction
+                    from playwright.async_api import async_playwright
+                    async with async_playwright() as p:
+                        browser = await p.chromium.launch(headless=True)
+                        try:
+                            page = await browser.new_page()
+                            # Set timeout and wait condition
+                            await page.goto(f"https://{domain}/", wait_until="networkidle", timeout=15000)
+                            
+                            # Extract links using DOM API
+                            links = await page.evaluate("""() => {
+                                const results = {
+                                    email: null,
+                                    twitter: null,
+                                    github: null,
+                                    linkedin: null
+                                };
+                                
+                                document.querySelectorAll('a[href]').forEach(a => {
+                                    const href = a.href.toLowerCase();
+                                    
+                                    // Email
+                                    if (!results.email && href.startsWith('mailto:')) {
+                                        results.email = href.replace('mailto:', '').split('?')[0];
+                                    }
+                                    
+                                    // Socials
+                                    if (!results.twitter && (href.includes('twitter.com/') || href.includes('x.com/'))) {
+                                        results.twitter = a.href;
+                                    }
+                                    if (!results.github && href.includes('github.com/')) {
+                                        results.github = a.href;
+                                    }
+                                    if (!results.linkedin && href.includes('linkedin.com/')) {
+                                        results.linkedin = a.href;
+                                    }
+                                });
+                                return results;
+                            }""")
+                            
+                            if links['email']: contact = links['email']
+                            socials['twitter'] = links['twitter']
+                            socials['github'] = links['github']
+                            socials['linkedin'] = links['linkedin']
+                            
+                            logger.info(f"Discovered contacts: {links}")
+                            
+                        finally:
+                            await browser.close()
+
+                except Exception as e:
+                     logger.warning(f"Failed to scrape homepage for {domain} with Playwright: {e}")
+
+        return is_allowed, crawl_delay, contact, robots_content, security_content, socials
 
         return is_allowed, crawl_delay, contact, robots_content, security_content

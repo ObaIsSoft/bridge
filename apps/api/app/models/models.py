@@ -110,6 +110,9 @@ class DomainPermission(Base):
     robots_txt = Column(Text, nullable=True)
     security_txt = Column(Text, nullable=True)
     contact_email = Column(String(255), nullable=True)
+    twitter_handle = Column(String(255), nullable=True)
+    github_handle = Column(String(255), nullable=True)
+    linkedin_handle = Column(String(255), nullable=True)
     crawl_delay = Column(Integer, default=1) # Seconds
     last_checked = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
