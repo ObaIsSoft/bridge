@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "bridge-mcp-server"
+version = "0.1.0"
+description = "MCP Server for the API Bridge Platform"
+authors = ["Obafemi <obafemi@example.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+mcp = "^1.2.1"
+httpx = "^0.26.0"
+pydantic = "^2.5.3"
+pydantic-settings = "^2.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
