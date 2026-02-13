@@ -1,0 +1,132 @@
+🛡️ Checking Ethical Moat for: https://obafemiadebayo.vercel.app (Real DB via SQLite)
+2026-02-13 22:17:02,120 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-13 22:17:02,121 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+INFO:sqlalchemy.engine.Engine:PRAGMA main.table_info("users")
+2026-02-13 22:17:02,121 INFO sqlalchemy.engine.Engine [raw sql] ()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+2026-02-13 22:17:02,125 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("api_keys")
+INFO:sqlalchemy.engine.Engine:PRAGMA main.table_info("api_keys")
+2026-02-13 22:17:02,125 INFO sqlalchemy.engine.Engine [raw sql] ()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+2026-02-13 22:17:02,126 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("bridges")
+INFO:sqlalchemy.engine.Engine:PRAGMA main.table_info("bridges")
+2026-02-13 22:17:02,126 INFO sqlalchemy.engine.Engine [raw sql] ()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+2026-02-13 22:17:02,126 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("usage_logs")
+INFO:sqlalchemy.engine.Engine:PRAGMA main.table_info("usage_logs")
+2026-02-13 22:17:02,127 INFO sqlalchemy.engine.Engine [raw sql] ()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+2026-02-13 22:17:02,127 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("webhooks")
+INFO:sqlalchemy.engine.Engine:PRAGMA main.table_info("webhooks")
+2026-02-13 22:17:02,127 INFO sqlalchemy.engine.Engine [raw sql] ()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+2026-02-13 22:17:02,128 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("webhook_logs")
+INFO:sqlalchemy.engine.Engine:PRAGMA main.table_info("webhook_logs")
+2026-02-13 22:17:02,128 INFO sqlalchemy.engine.Engine [raw sql] ()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+2026-02-13 22:17:02,129 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("domain_permissions")
+INFO:sqlalchemy.engine.Engine:PRAGMA main.table_info("domain_permissions")
+2026-02-13 22:17:02,129 INFO sqlalchemy.engine.Engine [raw sql] ()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+2026-02-13 22:17:02,130 INFO sqlalchemy.engine.Engine COMMIT
+INFO:sqlalchemy.engine.Engine:COMMIT
+   Clearing cache for obafemiadebayo.vercel.app...
+2026-02-13 22:17:02,157 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-13 22:17:02,158 INFO sqlalchemy.engine.Engine DELETE FROM domain_permissions WHERE domain_permissions.domain = ?
+INFO:sqlalchemy.engine.Engine:DELETE FROM domain_permissions WHERE domain_permissions.domain = ?
+2026-02-13 22:17:02,158 INFO sqlalchemy.engine.Engine [generated in 0.00027s] ('obafemiadebayo.vercel.app',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00027s] ('obafemiadebayo.vercel.app',)
+2026-02-13 22:17:02,161 INFO sqlalchemy.engine.Engine COMMIT
+INFO:sqlalchemy.engine.Engine:COMMIT
+   Checking access via PermissionService (Filtered Fresh)...
+2026-02-13 22:17:02,164 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-13 22:17:02,167 INFO sqlalchemy.engine.Engine SELECT domain_permissions.domain AS domain_permissions_domain, domain_permissions.status AS domain_permissions_status, domain_permissions.robots_txt AS domain_permissions_robots_txt, domain_permissions.security_txt AS domain_permissions_security_txt, domain_permissions.contact_email AS domain_permissions_contact_email, domain_permissions.twitter_handle AS domain_permissions_twitter_handle, domain_permissions.github_handle AS domain_permissions_github_handle, domain_permissions.linkedin_handle AS domain_permissions_linkedin_handle, domain_permissions.crawl_delay AS domain_permissions_crawl_delay, domain_permissions.last_checked AS domain_permissions_last_checked, domain_permissions.created_at AS domain_permissions_created_at 
+FROM domain_permissions 
+WHERE domain_permissions.domain = ?
+INFO:sqlalchemy.engine.Engine:SELECT domain_permissions.domain AS domain_permissions_domain, domain_permissions.status AS domain_permissions_status, domain_permissions.robots_txt AS domain_permissions_robots_txt, domain_permissions.security_txt AS domain_permissions_security_txt, domain_permissions.contact_email AS domain_permissions_contact_email, domain_permissions.twitter_handle AS domain_permissions_twitter_handle, domain_permissions.github_handle AS domain_permissions_github_handle, domain_permissions.linkedin_handle AS domain_permissions_linkedin_handle, domain_permissions.crawl_delay AS domain_permissions_crawl_delay, domain_permissions.last_checked AS domain_permissions_last_checked, domain_permissions.created_at AS domain_permissions_created_at 
+FROM domain_permissions 
+WHERE domain_permissions.domain = ?
+2026-02-13 22:17:02,167 INFO sqlalchemy.engine.Engine [generated in 0.00037s] ('obafemiadebayo.vercel.app',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00037s] ('obafemiadebayo.vercel.app',)
+INFO:httpx:HTTP Request: GET https://obafemiadebayo.vercel.app/robots.txt "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://obafemiadebayo.vercel.app/.well-known/security.txt "HTTP/1.1 404 Not Found"
+INFO:app.services.permissions:Discovered contacts: {'email': None, 'twitter': 'https://x.com/kiisi_adebayorr', 'github': 'https://github.com/ObaIsSoft/movie_subtitle', 'linkedin': 'https://www.linkedin.com/in/obafemi-adebayo-oyetoro/', 'debug_links': ['https://obafemiadebayo.vercel.app/#main-content', 'https://obafemiadebayo.vercel.app/#home', 'https://obafemiadebayo.vercel.app/#home', 'https://obafemiadebayo.vercel.app/#about', 'https://obafemiadebayo.vercel.app/#skills', 'https://obafemiadebayo.vercel.app/#projects', 'https://obafemiadebayo.vercel.app/#side-quests', 'https://obafemiadebayo.vercel.app/#contact', 'https://obafemiadebayo.vercel.app/#home', 'https://obafemiadebayo.vercel.app/#about', 'https://obafemiadebayo.vercel.app/#skills', 'https://obafemiadebayo.vercel.app/#projects', 'https://obafemiadebayo.vercel.app/#side-quests', 'https://obafemiadebayo.vercel.app/#contact', 'https://obafemiadebayo.vercel.app/#projects', 'https://obafemiadebayo.vercel.app/#contact', 'https://docs.google.com/document/d/1ZPe410qALFmMb--soF_9SWZRYgEOVuNrOL1bbOGiPcw/edit?usp=sharing', 'https://quoted-subs-obafemi.fly.dev/', 'https://github.com/ObaIsSoft/movie_subtitle', 'https://faajifind.vercel.app/', 'https://github.com/ObaIsSoft/faajifind', 'https://agroconnect-7a58a.web.app/', 'https://github.com/ObaIsSoft/agroconnect', 'https://chromewebstore.google.com/detail/watched-overlay/enmgnjfgdfegppkdhhbhgkgfgpjaakce', 'https://github.com/ObaIsSoft/watched', 'https://obafemiadebayo.vercel.app/#', 'https://github.com/ObaIsSoft/SceneIt', 'https://obafemiadebayo.vercel.app/#', 'https://github.com/ObaIsSoft/oba-cgpa-backend', 'https://obafemiadebayo.vercel.app/games.html', 'https://obafemiadebayo.vercel.app/books.html', 'https://github.com/ObaIsSoft', 'https://www.linkedin.com/in/obafemi-adebayo-oyetoro/', 'https://x.com/kiisi_adebayorr'], 'debug_body': 'Skip to main content\nObafemi.py\nhome\nabout\nskills\nprojects\nside quests\ncontact\nOBAFEMI\n\nfull stack developer\n\nView My Work\nLet\'s Talk\nView CV\nABOUT ME\n\nHey, I\'m Obafemi, a full stack developer who bridges the gap between elegant design and robust functionality.\n\nI specialize in building performant web applications using React, Node.js, and modern JavaScript. My focus is on creating intuitive user experiences backed by scalable architecture, whether it\'s a real-time data dashboard or an interactive 3D visualization.\n\nWhat sets me apart? I don\'t just write code, I obsess over performance metrics, accessibility standards, and the little details that make interfaces feel premium. From optimizing Core Web Vitals to implementing smooth animations, I treat every project like it\'s going into production tomorrow.\n\nWhen I\'m not coding, you\'ll find me exploring sci-fi worlds and gaming, inspiring me to push technical boundaries and build experiences that feel futuristic today.\n\n85%\nDEPLOYMENT SUCCESS\n\nMaintaining high reliability across complex production environments.\n\n92%\nCORE PERFORMANCE\n\nAverage Lighthouse score across all optimized web builds.\n\n25ms\nINPUT LATENCY\n\nLow-latency architecture ensuring butter-smooth user interactions.\n\n"You are very smart and have unique ways of solving problems."\nSUPERVISOR\nBELLS UNIVERSITY\n"Obafemi delivers high-fidelity frontends with a rare understanding of backend complexity. A truly resourceful engineer."\nTECH LEAD\nCASTLENET\n"Exceptional technical depth. His work on performance and Core Web Vitals optimizations consistently sets the benchmark."\nSENIOR CONSULTANT\nTECH GROUP\n"Highly capable of bridging engineering gaps with creative thinking and robust, scalable solutions."\nACADEMIC MENTOR\nPROJECT DEPT.\n"You are very smart and have unique ways of solving problems."\nSUPERVISOR\nBELLS UNIVERSITY\n"Obafemi is quite disciplined and always inquisitive, he is quite remarkable."\nNETWORK ENGINEER\nCASTLENET\n"He is really amazing and resourceful, deli'}
+DEBUG LINKS: ['https://obafemiadebayo.vercel.app/#main-content', 'https://obafemiadebayo.vercel.app/#home', 'https://obafemiadebayo.vercel.app/#home', 'https://obafemiadebayo.vercel.app/#about', 'https://obafemiadebayo.vercel.app/#skills', 'https://obafemiadebayo.vercel.app/#projects', 'https://obafemiadebayo.vercel.app/#side-quests', 'https://obafemiadebayo.vercel.app/#contact', 'https://obafemiadebayo.vercel.app/#home', 'https://obafemiadebayo.vercel.app/#about', 'https://obafemiadebayo.vercel.app/#skills', 'https://obafemiadebayo.vercel.app/#projects', 'https://obafemiadebayo.vercel.app/#side-quests', 'https://obafemiadebayo.vercel.app/#contact', 'https://obafemiadebayo.vercel.app/#projects', 'https://obafemiadebayo.vercel.app/#contact', 'https://docs.google.com/document/d/1ZPe410qALFmMb--soF_9SWZRYgEOVuNrOL1bbOGiPcw/edit?usp=sharing', 'https://quoted-subs-obafemi.fly.dev/', 'https://github.com/ObaIsSoft/movie_subtitle', 'https://faajifind.vercel.app/', 'https://github.com/ObaIsSoft/faajifind', 'https://agroconnect-7a58a.web.app/', 'https://github.com/ObaIsSoft/agroconnect', 'https://chromewebstore.google.com/detail/watched-overlay/enmgnjfgdfegppkdhhbhgkgfgpjaakce', 'https://github.com/ObaIsSoft/watched', 'https://obafemiadebayo.vercel.app/#', 'https://github.com/ObaIsSoft/SceneIt', 'https://obafemiadebayo.vercel.app/#', 'https://github.com/ObaIsSoft/oba-cgpa-backend', 'https://obafemiadebayo.vercel.app/games.html', 'https://obafemiadebayo.vercel.app/books.html', 'https://github.com/ObaIsSoft', 'https://www.linkedin.com/in/obafemi-adebayo-oyetoro/', 'https://x.com/kiisi_adebayorr']
+DEBUG BODY TEXT: Skip to main content
+Obafemi.py
+home
+about
+skills
+projects
+side quests
+contact
+OBAFEMI
+
+full stack developer
+
+View My Work
+Let's Talk
+View CV
+ABOUT ME
+
+Hey, I'm Obafemi, a full stack developer who bridges the gap between elegant design and robust functionality.
+
+I specialize in building performant web applications using React, Node.js, and modern JavaScript. My focus is on creating intuitive user experiences backed by scalable architecture, whether it's a real-time data dashboard or an interactive 3D visualization.
+
+What sets me apart? I don't just write code, I obsess over performance metrics, accessibility standards, and the little details that make interfaces feel premium. From optimizing Core Web Vitals to implementing smooth animations, I treat every project like it's going into production tomorrow.
+
+When I'm not coding, you'll find me exploring sci-fi worlds and gaming, inspiring me to push technical boundaries and build experiences that feel futuristic today.
+
+85%
+DEPLOYMENT SUCCESS
+
+Maintaining high reliability across complex production environments.
+
+92%
+CORE PERFORMANCE
+
+Average Lighthouse score across all optimized web builds.
+
+25ms
+INPUT LATENCY
+
+Low-latency architecture ensuring butter-smooth user interactions.
+
+"You are very smart and have unique ways of solving problems."
+SUPERVISOR
+BELLS UNIVERSITY
+"Obafemi delivers high-fidelity frontends with a rare understanding of backend complexity. A truly resourceful engineer."
+TECH LEAD
+CASTLENET
+"Exceptional technical depth. His work on performance and Core Web Vitals optimizations consistently sets the benchmark."
+SENIOR CONSULTANT
+TECH GROUP
+"Highly capable of bridging engineering gaps with creative thinking and robust, scalable solutions."
+ACADEMIC MENTOR
+PROJECT DEPT.
+"You are very smart and have unique ways of solving problems."
+SUPERVISOR
+BELLS UNIVERSITY
+"Obafemi is quite disciplined and always inquisitive, he is quite remarkable."
+NETWORK ENGINEER
+CASTLENET
+"He is really amazing and resourceful, deli
+2026-02-13 22:17:10,038 INFO sqlalchemy.engine.Engine INSERT INTO domain_permissions (domain, status, robots_txt, security_txt, contact_email, twitter_handle, github_handle, linkedin_handle, crawl_delay, last_checked, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+INFO:sqlalchemy.engine.Engine:INSERT INTO domain_permissions (domain, status, robots_txt, security_txt, contact_email, twitter_handle, github_handle, linkedin_handle, crawl_delay, last_checked, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-02-13 22:17:10,038 INFO sqlalchemy.engine.Engine [generated in 0.00062s] ('obafemiadebayo.vercel.app', 'ALLOWED', 'User-agent: *\nAllow: /\n\n# Sitemaps\nSitemap: https://obafemi.dev/sitemap.xml\n\n# Disallow admin/API routes if any\n# Disallow: /api/\n# Disallow: /admin/\n', None, None, 'https://x.com/kiisi_adebayorr', 'https://github.com/ObaIsSoft/movie_subtitle', 'https://www.linkedin.com/in/obafemi-adebayo-oyetoro/', 1, '2026-02-13 21:17:10.033433', '2026-02-13 21:17:10.037829')
+INFO:sqlalchemy.engine.Engine:[generated in 0.00062s] ('obafemiadebayo.vercel.app', 'ALLOWED', 'User-agent: *\nAllow: /\n\n# Sitemaps\nSitemap: https://obafemi.dev/sitemap.xml\n\n# Disallow admin/API routes if any\n# Disallow: /api/\n# Disallow: /admin/\n', None, None, 'https://x.com/kiisi_adebayorr', 'https://github.com/ObaIsSoft/movie_subtitle', 'https://www.linkedin.com/in/obafemi-adebayo-oyetoro/', 1, '2026-02-13 21:17:10.033433', '2026-02-13 21:17:10.037829')
+2026-02-13 22:17:10,046 INFO sqlalchemy.engine.Engine COMMIT
+INFO:sqlalchemy.engine.Engine:COMMIT
+
+✅ Result for obafemiadebayo.vercel.app:
+   - Permission: ALLOWED (Allowed=True)
+   - Contact Email: None found
+   - Socials:
+     • Twitter:  https://x.com/kiisi_adebayorr
+     • GitHub:   https://github.com/ObaIsSoft/movie_subtitle
+     • LinkedIn: https://www.linkedin.com/in/obafemi-adebayo-oyetoro/
+   - Robots.txt found: Yes
+   - Security.txt found: No

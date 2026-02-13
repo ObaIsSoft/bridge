@@ -34,7 +34,7 @@ class PermissionService:
                 return True
 
         # 2. Fetch & Parse real implementation
-        is_allowed, crawl_delay, contact, robots_content, security_content = await self._fetch_permissions(domain)
+        is_allowed, crawl_delay, contact, robots_content, security_content, socials = await self._fetch_permissions(domain)
         
         # 3. Update/Create DB Record
         status = "ALLOWED" if is_allowed else "DENIED"
@@ -46,6 +46,10 @@ class PermissionService:
             permission.robots_txt = robots_content
             permission.security_txt = security_content
             permission.last_checked = datetime.utcnow()
+            # Update socials
+            permission.twitter_handle = socials.get('twitter')
+            permission.github_handle = socials.get('github')
+            permission.linkedin_handle = socials.get('linkedin')
         else:
             permission = DomainPermission(
                 domain=domain,
@@ -54,7 +58,10 @@ class PermissionService:
                 contact_email=contact,
                 robots_txt=robots_content,
                 security_txt=security_content,
-                last_checked=datetime.utcnow()
+                last_checked=datetime.utcnow(),
+                twitter_handle=socials.get('twitter'),
+                github_handle=socials.get('github'),
+                linkedin_handle=socials.get('linkedin')
             )
             db.add(permission)
         
@@ -139,26 +146,56 @@ class PermissionService:
                                 document.querySelectorAll('a[href]').forEach(a => {
                                     const href = a.href.toLowerCase();
                                     
-                                    // Email
+                                    // Email (Mailto)
                                     if (!results.email && href.startsWith('mailto:')) {
                                         results.email = href.replace('mailto:', '').split('?')[0];
                                     }
                                     
-                                    // Socials
+                                    // Socials with priority
+                                    // GitHub
+                                    if (href.includes('github.com/')) {
+                                        const path = href.split('github.com/')[1];
+                                        const isProfile = path && !path.includes('/');
+                                        if (!results.github || isProfile) {
+                                            results.github = a.href;
+                                        }
+                                    }
+                                    // Twitter
                                     if (!results.twitter && (href.includes('twitter.com/') || href.includes('x.com/'))) {
                                         results.twitter = a.href;
                                     }
-                                    if (!results.github && href.includes('github.com/')) {
-                                        results.github = a.href;
-                                    }
-                                    if (!results.linkedin && href.includes('linkedin.com/')) {
+                                    // LinkedIn
+                                    if (href.includes('linkedin.com/')) {
                                         results.linkedin = a.href;
                                     }
                                 });
+
+                                // Fallback: Scan text for email if no mailto link found
+                                if (!results.email) {
+                                    const bodyText = document.body.innerText;
+                                    // DEBUG: Log the body text to see what we are scanning
+                                    // console.log("Body Text Snippet:", bodyText.substring(0, 1000)); 
+                                    
+                                    // Broader regex to catch emails
+                                    const emailMatch = bodyText.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/i);
+                                    if (emailMatch) {
+                                        results.email = emailMatch[0];
+                                    }
+                                    
+                                    // Debug: Capture ALL links to see what we missed
+                                    results.debug_links = Array.from(document.querySelectorAll('a[href]')).map(a => a.href);
+                                    // Pass body text back for debug
+                                    results.debug_body = bodyText.substring(0, 10000); 
+                                }
+
                                 return results;
                             }""")
                             
                             if links['email']: contact = links['email']
+                            if 'debug_links' in links:
+                                print(f"DEBUG LINKS: {links['debug_links']}")
+                            if 'debug_body' in links:
+                                print(f"DEBUG BODY TEXT: {links['debug_body']}")
                             socials['twitter'] = links['twitter']
                             socials['github'] = links['github']
                             socials['linkedin'] = links['linkedin']
