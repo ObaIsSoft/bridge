@@ -12,6 +12,7 @@ class BridgeBase(BaseModel):
     selectors: Optional[Dict[str, str]] = None
     auth_config: Optional[Dict[str, Any]] = None
     interaction_script: Optional[List[Dict[str, Any]]] = None
+    session_data: Optional[Dict[str, Any]] = None
 
 class BridgeCreate(BridgeBase):
     pass

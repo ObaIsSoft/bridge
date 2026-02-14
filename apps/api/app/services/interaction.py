@@ -57,6 +57,29 @@ class InteractionService:
                 # We log but continue, or should we abort?
                 # For now, continue best effort.
 
+    async def inject_session_data(self, page: Page, session_data: Dict[str, Any]):
+        """Restores cookies and local storage from saved session data."""
+        if not session_data:
+            return
+
+        cookies = session_data.get("cookies", [])
+        if cookies:
+            logger.info(f"Restoring {len(cookies)} session cookies")
+            await page.context.add_cookies(cookies)
+        
+        # LocalStorage injection requires being on the domain, so we might need a dummy navigation
+        # or handle it after initial goto. For now, focusing on cookies.
+
+    async def capture_session_data(self, page: Page) -> Dict[str, Any]:
+        """Captures current cookies and storage to save session state."""
+        cookies = await page.context.cookies()
+        logger.info(f"Captured {len(cookies)} session cookies")
+        
+        return {
+            "cookies": cookies,
+            "timestamp": "iso-now" # TODO: Add real timestamp
+        }
+
     async def perform_auth(self, page: Page, auth_config: Dict[str, Any]):
         """
         Handles authentication before extraction.
@@ -69,10 +92,8 @@ class InteractionService:
         
         if auth_type == "cookie":
             cookies = auth_config.get("cookies", [])
-            logger.info(f"Injecting {len(cookies)} cookies")
+            logger.info(f"Injecting {len(cookies)} config cookies")
             await page.context.add_cookies(cookies)
-            # Reload to apply cookies? Usually needed if we are already on the page.
-            # But normally we do this before goto, or reload after.
             try:
                 await page.reload()
             except:

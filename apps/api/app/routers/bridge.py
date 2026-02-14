@@ -196,7 +196,7 @@ async def create_bridge(
             break
     
     bridge = Bridge(
-        **bridge_in.model_dump(),
+        **bridge_in.model_dump(exclude={"slug"}),
         user_id=user.id,
         slug=slug
     )
@@ -222,6 +222,11 @@ async def get_bridge(
         
     if not bridge:
         result = await db.execute(select(Bridge).where(Bridge.slug == bridge_identifier))
+        bridge = result.scalar_one_or_none()
+
+    # Try Domain
+    if not bridge and "." in bridge_identifier:
+        result = await db.execute(select(Bridge).where(Bridge.domain == bridge_identifier).limit(1))
         bridge = result.scalar_one_or_none()
 
     if not bridge:
@@ -322,6 +327,11 @@ async def run_extraction(
         
     if not bridge:
         result = await db.execute(select(Bridge).where(Bridge.slug == bridge_identifier))
+        bridge = result.scalar_one_or_none()
+
+    # Try Domain
+    if not bridge and "." in bridge_identifier:
+        result = await db.execute(select(Bridge).where(Bridge.domain == bridge_identifier).limit(1))
         bridge = result.scalar_one_or_none()
 
     if not bridge:

@@ -14,8 +14,9 @@ class CrawlerService:
         self, 
         url: str, 
         auth_config: Optional[Dict[str, Any]] = None,
-        interaction_script: Optional[List[Dict[str, Any]]] = None
-    ) -> Optional[str]:
+        interaction_script: Optional[List[Dict[str, Any]]] = None,
+        session_data: Optional[Dict[str, Any]] = None
+    ) -> tuple[Optional[str], Optional[Dict[str, Any]]]:
         """Fetch rendered HTML from a URL using Playwright with optional Auth and Interactions"""
         # 1. Check Permissions
         async with AsyncSessionLocal() as db:
@@ -36,15 +37,18 @@ class CrawlerService:
                 
                 page = await context.new_page()
                 
-                # 2. Perform Auth (Cookies/Login) BEFORE Navigation (if cookie) or AFTER (if login flow)
-                # But InteractionService.perform_auth handles the logic (cookies added to context)
+                # 2. Inject Session Data (Restoring previous session)
+                if session_data:
+                    await interaction.inject_session_data(page, session_data)
+
+                # 3. Perform Auth (Cookies/Login) - Only if session injection didn't fully cover it or if explicit auth config exists
                 if auth_config:
                     await interaction.perform_auth(page, auth_config)
 
                 logger.info(f"Crawling {url}...")
                 await page.goto(url, wait_until="networkidle", timeout=30000)
                 
-                # 3. Execute Interaction Script (Click, Scroll, Wait)
+                # 4. Execute Interaction Script (Click, Scroll, Wait)
                 if interaction_script:
                     await interaction.perform_interaction(page, interaction_script)
                 else:
@@ -53,10 +57,14 @@ class CrawlerService:
                     await page.wait_for_timeout(2000)
                 
                 content = await page.content()
-                return content
+                
+                # 5. Capture new session data (to persist cookies/storage for next time)
+                new_session_data = await interaction.capture_session_data(page)
+
+                return content, new_session_data
             except Exception as e:
                 logger.error(f"Error crawling {url}: {e}")
-                return None
+                return None, None
             finally:
                 await browser.close()
 

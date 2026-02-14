@@ -51,6 +51,7 @@ class Bridge(Base):
     # Phase 4: User Simulation & Auth
     auth_config = Column(JSON, nullable=True) # { "type": "cookie"|"login", "data": ... }
     interaction_script = Column(JSON, nullable=True) # [ { "action": "click", "selector": "#login" }, ... ]
+    session_data = Column(JSON, nullable=True) # Persistent session storage (Cookies, LocalStorage)
     
     status = Column(String(20), default="active")
     last_successful_extraction = Column(DateTime, nullable=True)

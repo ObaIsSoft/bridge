@@ -18,7 +18,7 @@ class SchemaDiscoveryService:
         """
         # 1. Crawl the page to get a sample
         # We use the existing crawler but might want to limit content size or use a specific strategy
-        html_content = await self.crawler.get_page_content(url)
+        html_content, _ = await self.crawler.get_page_content(url)
         
         if not html_content:
             logger.error(f"Failed to crawl {url} for schema discovery")
