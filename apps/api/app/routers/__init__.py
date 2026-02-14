@@ -1,3 +1,3 @@
-from . import bridge, key, webhooks
+from . import bridge, key, webhooks, handshake
 
-__all__ = ["bridge", "key", "webhooks"]
+__all__ = ["bridge", "key", "webhooks", "handshake"]

@@ -29,6 +29,8 @@ from pydantic import BaseModel, HttpUrl
 class AnalyzeRequest(BaseModel):
     url: HttpUrl
 
+router = APIRouter(prefix="/bridges", tags=["Bridges"])
+
 @router.post("/analyze")
 async def analyze_url(
     request: AnalyzeRequest,
@@ -43,8 +45,6 @@ async def analyze_url(
         return {"schema": schema}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-router = APIRouter(prefix="/bridges", tags=["Bridges"])
 
 @router.get("/", response_model=List[BridgeResponse])
 async def list_bridges(
@@ -155,6 +155,23 @@ async def create_bridge(
     db.add(bridge)
     await db.commit()
     await db.refresh(bridge)
+    await db.refresh(bridge)
+    return bridge
+
+@router.get("/{bridge_id}", response_model=BridgeResponse)
+async def get_bridge(
+    bridge_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    from app.models import DomainPermission
+    bridge = await db.get(Bridge, bridge_id)
+    if not bridge:
+        raise HTTPException(status_code=404, detail="Bridge not found")
+    
+    # Fetch permissions
+    perm = await db.get(DomainPermission, bridge.domain)
+    bridge.permission = perm
+    
     return bridge
 
 @router.put("/{bridge_id}", response_model=BridgeResponse)

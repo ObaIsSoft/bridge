@@ -88,11 +88,15 @@ export default function BridgesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {bridges.map((bridge) => (
                         <div key={bridge.id} className="glass glass-hover rounded-2xl p-6 flex flex-col justify-between group overflow-hidden relative">
-                            <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <ExternalLink className="h-4 w-4 text-zinc-500 hover:text-white cursor-pointer" onClick={() => window.open(bridge.target_url, '_blank')} />
+                            <Link href={`/bridges/${bridge.id}`} className="absolute inset-0 z-0" />
+                            <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                <ExternalLink className="h-4 w-4 text-zinc-500 hover:text-white cursor-pointer" onClick={(e) => {
+                                    e.preventDefault();
+                                    window.open(bridge.target_url, '_blank');
+                                }} />
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-4 pointer-events-none">
                                 <div className="flex items-center gap-3">
                                     <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-primary/30 transition-colors">
                                         <ToyBrick className="h-5 w-5 text-zinc-400 group-hover:text-primary" />
@@ -124,18 +128,24 @@ export default function BridgesPage() {
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between">
-                                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest leading-none">
+                            <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between z-10">
+                                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest leading-none pointer-events-none">
                                     Last Key Sync: <span className="text-zinc-300">Recently</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
-                                        onClick={() => handleRun(bridge.id)}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleRun(bridge.id);
+                                        }}
                                         className="h-9 w-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-primary hover:text-black hover:border-primary transition-all group/run" title="Run Extraction">
                                         <Play className="h-4 w-4 fill-current group-hover/run:scale-110 transition-transform" />
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(bridge.id)}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleDelete(bridge.id);
+                                        }}
                                         className="h-9 w-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-red-500/20 hover:text-red-500 hover:border-red-500/30 transition-all p-2" title="Delete">
                                         <Trash2 className="h-4 w-4" />
                                     </button>

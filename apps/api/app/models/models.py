@@ -116,3 +116,28 @@ class DomainPermission(Base):
     crawl_delay = Column(Integer, default=1) # Seconds
     last_checked = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class HandshakeRequest(Base):
+    __tablename__ = "handshake_requests"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
+    domain = Column(String(255), nullable=False)
+    
+    # Outreach Details
+    method = Column(String(50), nullable=False) # 'EMAIL', 'TWITTER', 'GITHUB'
+    recipient = Column(String(255), nullable=False) # email, handle, or username
+    status = Column(String(50), default="DRAFT") # DRAFT, PENDING_APPROVAL, SENT, FAILED
+    
+    # Message Content
+    message_subject = Column(String(255), nullable=True)
+    message_body = Column(Text, nullable=False)
+    
+    # Tracking
+    remote_id = Column(String(255), nullable=True) # Tweet ID, GitHub Issue ID, Message ID
+    error_log = Column(Text, nullable=True)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = relationship("User")

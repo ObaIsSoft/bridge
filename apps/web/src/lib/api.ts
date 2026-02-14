@@ -39,6 +39,17 @@ export const bridgesApi = {
     getSecurityPulse: () => apiFetch('/bridges/security/pulse'),
     scan: () => apiFetch('/bridges/scan'),
     scanDeep: () => apiFetch('/bridges/scan/deep', { method: 'POST' }),
+    get: (id: string) => apiFetch(`/bridges/${id}`),
+};
+
+export const handshakeApi = {
+    initiate: (data: any) => apiFetch('/handshake/initiate', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    }),
+    approve: (id: string) => apiFetch(`/handshake/approve/${id}`, {
+        method: 'POST',
+    }),
 };
 
 export const webhooksApi = {

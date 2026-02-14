@@ -60,3 +60,19 @@ async def validate_api_key(
     await db.commit()
 
     return api_key
+
+async def get_current_user(
+    db: AsyncSession = Depends(get_db)
+):
+    from app.models import User
+    # Mock authentication for MVP.
+    result = await db.execute(select(User).limit(1))
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        user = User(clerk_id="demo_user", email="demo@example.com")
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+        
+    return user

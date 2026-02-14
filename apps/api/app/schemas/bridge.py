@@ -13,6 +13,18 @@ class BridgeBase(BaseModel):
 class BridgeCreate(BridgeBase):
     pass
 
+class PermissionResponse(BaseModel):
+    domain: str
+    status: str
+    contact_email: Optional[str] = None
+    twitter_handle: Optional[str] = None
+    github_handle: Optional[str] = None
+    linkedin_handle: Optional[str] = None
+    last_checked: datetime
+
+    class Config:
+        from_attributes = True
+
 class BridgeResponse(BridgeBase):
     id: UUID
     status: str
@@ -20,6 +32,7 @@ class BridgeResponse(BridgeBase):
     updated_at: datetime
     last_successful_extraction: Optional[datetime]
     last_error: Optional[str]
+    permission: Optional[PermissionResponse] = None
 
     class Config:
         from_attributes = True
