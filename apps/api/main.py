@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
     stop_background_watcher()
 
 
-from app.routers import bridge, key, webhooks, handshake
+from app.routers import bridge, key, webhooks, handshake, llm
 
 app = FastAPI(
     title="API Bridge Platform",
@@ -59,6 +59,7 @@ app.include_router(bridge.router, prefix="/api/v1")
 app.include_router(key.router, prefix="/api/v1")
 app.include_router(webhooks.router, prefix="/api/v1")
 app.include_router(handshake.router, prefix="/api/v1")
+app.include_router(llm.router)
 
 
 @app.get("/")

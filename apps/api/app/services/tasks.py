@@ -12,7 +12,6 @@ import logging
 import httpx
 from app.models import Bridge, UsageLog, Webhook, WebhookLog
 import nest_asyncio
-nest_asyncio.apply()
 
 logger = logging.getLogger(__name__)
 

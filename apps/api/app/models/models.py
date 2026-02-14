@@ -18,6 +18,7 @@ class User(Base):
     api_keys = relationship("ApiKey", back_populates="user", cascade="all, delete-orphan")
     usage_logs = relationship("UsageLog", back_populates="user", cascade="all, delete-orphan")
     webhooks = relationship("Webhook", back_populates="user", cascade="all, delete-orphan")
+    llm_providers = relationship("LLMProviderConfig", back_populates="user", cascade="all, delete-orphan")
 
 class ApiKey(Base):
     __tablename__ = "api_keys"
@@ -148,3 +149,23 @@ class HandshakeRequest(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User")
+
+class LLMProviderConfig(Base):
+    """Configuration for user's LLM provider API keys"""
+    __tablename__ = "llm_providers"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
+    provider = Column(String(50), nullable=False)  # 'openai', 'anthropic', etc.
+    api_key_encrypted = Column(Text, nullable=False)  # TODO: Encrypt with Fernet
+    model = Column(String(100), nullable=True)  # e.g. 'gpt-4o-mini', 'claude-3-5-sonnet'
+    priority = Column(Integer, default=0)  # Lower = higher priority
+    is_active = Column(Boolean, default=True)
+    rate_limit_per_minute = Column(Integer, nullable=True)
+    last_used_at = Column(DateTime, nullable=True)
+    last_error = Column(Text, nullable=True)
+    consecutive_failures = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    user = relationship("User", back_populates="llm_providers")
