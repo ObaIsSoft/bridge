@@ -70,7 +70,11 @@ async def _perform_extraction(bridge_id: str, user_id: str):
             crawler = CrawlerService()
             extractor = ExtractionService()
 
-            html = await crawler.get_page_content(bridge.target_url)
+            html = await crawler.get_page_content(
+                url=bridge.target_url,
+                auth_config=bridge.auth_config,
+                interaction_script=bridge.interaction_script
+            )
             if not html:
                 raise Exception("Failed to crawl target URL")
 

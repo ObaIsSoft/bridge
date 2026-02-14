@@ -42,10 +42,16 @@ class Bridge(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
     name = Column(String(255), nullable=False)
+    slug = Column(String(255), unique=True, nullable=True) # For named lookups
     domain = Column(String(255), nullable=False)
     target_url = Column(Text, nullable=False)
     extraction_schema = Column(JSON, nullable=False)
     selectors = Column(JSON, nullable=True)
+    
+    # Phase 4: User Simulation & Auth
+    auth_config = Column(JSON, nullable=True) # { "type": "cookie"|"login", "data": ... }
+    interaction_script = Column(JSON, nullable=True) # [ { "action": "click", "selector": "#login" }, ... ]
+    
     status = Column(String(20), default="active")
     last_successful_extraction = Column(DateTime, nullable=True)
     last_error = Column(Text, nullable=True)

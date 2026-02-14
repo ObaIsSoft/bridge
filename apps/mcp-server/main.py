@@ -38,20 +38,41 @@ async def list_available_bridges() -> str:
     
     output = "Available Bridges:\n"
     for b in bridges:
-        output += f"- {b['name']} ({b['domain']}): {b['target_url']}\n"
+        slug = b.get('slug', 'N/A')
+        output += f"- {b['name']} (Slug: {slug}) [{b['domain']}]\n"
     return output
 
 @mcp.tool()
-async def extract_data_from_bridge(bridge_id: str) -> Dict[str, Any]:
+async def get_bridge_schema(bridge_identifier: str) -> Dict[str, Any]:
     """
-    Extract structured data from a specific bridge by its ID.
-    The response will contain the extracted JSON data.
+    Get the extraction schema for a specific bridge.
+    Arguments:
+        bridge_identifier: The UUID or Slug (e.g., 'amazon-products') of the bridge.
+    """
+    headers = {"X-API-Key": API_KEY} if API_KEY else {}
+    async with httpx.AsyncClient() as client:
+        try:
+            url = f"{API_URL}/api/v1/bridges/{bridge_identifier}"
+            response = await client.get(url, headers=headers, timeout=10.0)
+            response.raise_for_status()
+            data = response.json()
+            return data.get("extraction_schema", {})
+        except Exception as e:
+            logger.error(f"Failed to fetch schema: {e}")
+            return {"error": str(e)}
+
+@mcp.tool()
+async def extract_data_from_bridge(bridge_identifier: str) -> Dict[str, Any]:
+    """
+    Extract structured data from a specific bridge.
+    Arguments:
+        bridge_identifier: The UUID or Slug (e.g., 'amazon-products') of the bridge.
     """
     headers = {"X-API-Key": API_KEY} if API_KEY else {}
     async with httpx.AsyncClient() as client:
         try:
             # Trigger the extraction (now async, returns a task_id)
-            extract_url = f"{API_URL}/api/v1/bridges/{bridge_id}/extract"
+            extract_url = f"{API_URL}/api/v1/bridges/{bridge_identifier}/extract"
             response = await client.post(extract_url, headers=headers, timeout=30.0)
             response.raise_for_status()
             task_data = response.json()

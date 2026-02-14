@@ -14,8 +14,10 @@ import {
     Send,
     CheckCircle2,
     AlertTriangle,
-    Lock
+    Lock,
+    Settings
 } from 'lucide-react';
+import Link from 'next/link';
 import { bridgesApi, handshakeApi } from '@/lib/api';
 
 export default function BridgeDashboard() {
@@ -72,9 +74,14 @@ export default function BridgeDashboard() {
                     <h1 className="text-4xl font-bold text-white mb-2">{bridge.name}</h1>
                     <p className="text-zinc-400 font-mono">{bridge.domain}</p>
                 </div>
-                <div className={`px-4 py-2 rounded-full border ${isAllowed ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-red-500/10 border-red-500/20 text-red-500'} flex items-center gap-2`}>
-                    {isAllowed ? <CheckCircle2 className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
-                    <span className="font-bold tracking-wider">{perm.status || "UNKNOWN"}</span>
+                <div className="flex items-center gap-4">
+                    <Link href={`/bridges/${id}/settings`} className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors border border-white/5 hover:border-white/10">
+                        <Settings className="h-4 w-4" /> Settings
+                    </Link>
+                    <div className={`px-4 py-2 rounded-full border ${isAllowed ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-red-500/10 border-red-500/20 text-red-500'} flex items-center gap-2`}>
+                        {isAllowed ? <CheckCircle2 className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
+                        <span className="font-bold tracking-wider">{perm.status || "UNKNOWN"}</span>
+                    </div>
                 </div>
             </div>
 

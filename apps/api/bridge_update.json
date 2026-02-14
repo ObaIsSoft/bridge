@@ -1,0 +1,17 @@
+{
+    "name": "Test Bridge",
+    "domain": "example.com",
+    "target_url": "https://example.com",
+    "extraction_schema": {},
+    "selectors": null,
+    "auth_config": {
+        "type": "cookie",
+        "cookies": []
+    },
+    "interaction_script": [
+        {
+            "action": "wait",
+            "ms": 500
+        }
+    ]
+}

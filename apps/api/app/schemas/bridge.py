@@ -5,10 +5,13 @@ from datetime import datetime
 
 class BridgeBase(BaseModel):
     name: str
+    slug: Optional[str] = None
     domain: str
     target_url: str
     extraction_schema: Dict[str, Any]
     selectors: Optional[Dict[str, str]] = None
+    auth_config: Optional[Dict[str, Any]] = None
+    interaction_script: Optional[List[Dict[str, Any]]] = None
 
 class BridgeCreate(BridgeBase):
     pass

@@ -168,33 +168,62 @@ async def create_bridge(
     db: AsyncSession = Depends(get_db)
 ):
     # For MVP, we assume a default user exists
-    # In production, this would come from auth
     result = await db.execute(select(User).limit(1))
     user = result.scalar_one_or_none()
     
     if not user:
-        # Create a default user if none exists for the MVP demo
         user = User(clerk_id="demo_user", email="demo@example.com")
         db.add(user)
         await db.commit()
     
+    # Generate Slug
+    import re
+    def slugify(text):
+        text = text.lower()
+        text = re.sub(r'[^a-z0-9]+', '-', text)
+        return text.strip('-')
+
+    slug = slugify(bridge_in.name)
+    # Simple dedupe
+    base_slug = slug
+    count = 1
+    while True:
+        existing = await db.execute(select(Bridge).where(Bridge.slug == slug))
+        if existing.scalar_one_or_none():
+            slug = f"{base_slug}-{count}"
+            count += 1
+        else:
+            break
+    
     bridge = Bridge(
         **bridge_in.model_dump(),
-        user_id=user.id
+        user_id=user.id,
+        slug=slug
     )
     db.add(bridge)
     await db.commit()
     await db.refresh(bridge)
-    await db.refresh(bridge)
     return bridge
 
-@router.get("/{bridge_id}", response_model=BridgeResponse)
+@router.get("/{bridge_identifier}", response_model=BridgeResponse)
 async def get_bridge(
-    bridge_id: uuid.UUID,
+    bridge_identifier: str,
     db: AsyncSession = Depends(get_db)
 ):
     from app.models import DomainPermission
-    bridge = await db.get(Bridge, bridge_id)
+    
+    # Try UUID, else Slug
+    bridge = None
+    try:
+        bridge_uuid = uuid.UUID(bridge_identifier)
+        bridge = await db.get(Bridge, bridge_uuid)
+    except ValueError:
+        pass
+        
+    if not bridge:
+        result = await db.execute(select(Bridge).where(Bridge.slug == bridge_identifier))
+        bridge = result.scalar_one_or_none()
+
     if not bridge:
         raise HTTPException(status_code=404, detail="Bridge not found")
     
@@ -277,13 +306,24 @@ async def get_bridge_logs(
     )
     return result.scalars().all()
 
-@router.post("/{bridge_id}/extract", response_model=TaskResponse)
+@router.post("/{bridge_identifier}/extract", response_model=TaskResponse)
 async def run_extraction(
-    bridge_id: uuid.UUID,
+    bridge_identifier: str,
     db: AsyncSession = Depends(get_db),
     api_key: ApiKey = Depends(validate_api_key)
 ):
-    bridge = await db.get(Bridge, bridge_id)
+    # Try UUID, else Slug
+    bridge = None
+    try:
+        bridge_uuid = uuid.UUID(bridge_identifier)
+        bridge = await db.get(Bridge, bridge_uuid)
+    except ValueError:
+        pass
+        
+    if not bridge:
+        result = await db.execute(select(Bridge).where(Bridge.slug == bridge_identifier))
+        bridge = result.scalar_one_or_none()
+
     if not bridge:
         raise HTTPException(status_code=404, detail="Bridge not found")
     
