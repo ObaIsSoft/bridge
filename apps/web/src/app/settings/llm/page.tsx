@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Check, X, Loader2 } from "lucide-react";
+import { Plus, Trash2, Check, X, Loader2, Brain } from "lucide-react";
 
 interface LLMProvider {
     id: string;
@@ -76,6 +76,7 @@ export default function LLMSettingsPage() {
     };
 
     const deleteProvider = async (id: string) => {
+        if (!confirm("Delete this LLM provider?")) return;
         try {
             const apiKey = localStorage.getItem("bridge_api_key");
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/llm/providers/${id}`, {
@@ -113,153 +114,173 @@ export default function LLMSettingsPage() {
     const selectedProviderInfo = PROVIDER_OPTIONS.find(p => p.id === newProvider.provider);
 
     if (loading) {
-        return <div className="p-6 text-center">Loading...</div>;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            </div>
+        );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-4xl mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">LLM Providers</h1>
-                        <p className="text-gray-600 mt-1">Configure multiple LLM API keys with automatic failover</p>
-                    </div>
-                    <button
-                        onClick={() => setShowAddForm(true)}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                        <Plus size={20} />
-                        Add Provider
-                    </button>
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Header */}
+            <div className="flex justify-between items-start">
+                <div>
+                    <h1 className="text-5xl font-black tracking-tighter text-white mb-2 text-glow">LLM Providers</h1>
+                    <p className="text-zinc-500 max-w-lg font-medium">
+                        Configure multiple LLM API keys with automatic failover and priority-based selection.
+                    </p>
                 </div>
+                <button
+                    onClick={() => setShowAddForm(true)}
+                    className="glass px-6 py-3 rounded-xl flex items-center gap-2 text-white font-semibold hover:bg-primary/10 border border-primary/20 transition-all"
+                >
+                    <Plus size={20} className="text-primary" />
+                    Add Provider
+                </button>
+            </div>
 
-                {showAddForm && (
-                    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-                        <h2 className="text-xl font-semibold mb-4">Add New Provider</h2>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+            {/* Add Provider Form */}
+            {showAddForm && (
+                <div className="glass rounded-3xl p-8 shadow-2xl border border-white/10 animate-in slide-in-from-top duration-300">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
+                            <Brain className="h-6 w-6 text-primary" />
+                        </div>
+                        <h2 className="text-2xl font-black text-white tracking-tight">Add New Provider</h2>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Provider</label>
                                 <select
                                     value={newProvider.provider}
                                     onChange={(e) => setNewProvider({ ...newProvider, provider: e.target.value, model: "" })}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                    className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
                                 >
                                     {PROVIDER_OPTIONS.map(p => (
-                                        <option key={p.id} value={p.id}>{p.name}</option>
+                                        <option key={p.id} value={p.id} className="bg-zinc-900">{p.name}</option>
                                     ))}
                                 </select>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Model</label>
                                 <select
                                     value={newProvider.model}
                                     onChange={(e) => setNewProvider({ ...newProvider, model: e.target.value })}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                    className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
                                 >
-                                    <option value="">Select a model</option>
+                                    <option value="" className="bg-zinc-900">Select a model</option>
                                     {selectedProviderInfo?.models.map(m => (
-                                        <option key={m} value={m}>{m}</option>
+                                        <option key={m} value={m} className="bg-zinc-900">{m}</option>
                                     ))}
                                 </select>
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">API Key</label>
-                                <input
-                                    type="password"
-                                    value={newProvider.api_key}
-                                    onChange={(e) => setNewProvider({ ...newProvider, api_key: e.target.value })}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                                    placeholder="sk-..."
-                                />
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">API Key</label>
+                            <input
+                                type="password"
+                                value={newProvider.api_key}
+                                onChange={(e) => setNewProvider({ ...newProvider, api_key: e.target.value })}
+                                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:border-primary/50 focus:bg-white/10 transition-all placeholder:text-zinc-600"
+                                placeholder="sk-..."
+                            />
+                        </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Priority (lower = higher priority)</label>
-                                <input
-                                    type="number"
-                                    value={newProvider.priority}
-                                    onChange={(e) => setNewProvider({ ...newProvider, priority: parseInt(e.target.value) })}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                                    min="1"
-                                />
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Priority (lower = higher)</label>
+                            <input
+                                type="number"
+                                value={newProvider.priority}
+                                onChange={(e) => setNewProvider({ ...newProvider, priority: parseInt(e.target.value) })}
+                                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
+                                min="1"
+                            />
+                        </div>
 
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => testProvider(newProvider.provider, newProvider.model, newProvider.api_key)}
-                                    disabled={!newProvider.model || !newProvider.api_key || testing !== null}
-                                    className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 disabled:opacity-50 flex items-center justify-center gap-2"
-                                >
-                                    {testing === newProvider.provider ? <Loader2 size={16} className="animate-spin" /> : null}
-                                    Test Connection
-                                </button>
-                                <button
-                                    onClick={addProvider}
-                                    disabled={!newProvider.model || !newProvider.api_key}
-                                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                                >
-                                    Add Provider
-                                </button>
-                                <button
-                                    onClick={() => setShowAddForm(false)}
-                                    className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
+                        <div className="flex gap-3 pt-4">
+                            <button
+                                onClick={() => testProvider(newProvider.provider, newProvider.model, newProvider.api_key)}
+                                disabled={!newProvider.model || !newProvider.api_key || testing !== null}
+                                className="flex-1 glass px-6 py-3 rounded-xl font-semibold text-white hover:bg-white/10 border border-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {testing === newProvider.provider ? <Loader2 size={16} className="animate-spin" /> : null}
+                                Test Connection
+                            </button>
+                            <button
+                                onClick={addProvider}
+                                disabled={!newProvider.model || !newProvider.api_key}
+                                className="flex-1 bg-primary text-black px-6 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Add Provider
+                            </button>
+                            <button
+                                onClick={() => setShowAddForm(false)}
+                                className="glass px-6 py-3 rounded-xl font-semibold text-white hover:bg-white/10 border border-white/10 transition-all"
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
 
-                <div className="space-y-4">
-                    {providers.length === 0 ? (
-                        <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">
-                            No LLM providers configured. Add one to get started!
-                        </div>
-                    ) : (
-                        providers.map((p) => (
-                            <div key={p.id} className="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+            {/* Providers List */}
+            <div className="space-y-4">
+                {providers.length === 0 ? (
+                    <div className="glass rounded-3xl p-12 text-center shadow-2xl border border-white/10">
+                        <Brain className="h-16 w-16 text-zinc-600 mx-auto mb-4" />
+                        <p className="text-zinc-500 font-medium">No LLM providers configured. Add one to get started!</p>
+                    </div>
+                ) : (
+                    providers.map((p) => (
+                        <div key={p.id} className="glass rounded-3xl p-6 shadow-xl border border-white/10 flex items-center justify-between hover:border-primary/20 transition-all group">
+                            <div className="flex items-center gap-6 flex-1">
+                                <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 text-primary font-black text-xl">
+                                    #{p.priority}
+                                </div>
                                 <div className="flex-1">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-2xl font-bold text-gray-400">#{p.priority}</span>
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 capitalize">{p.provider}</h3>
-                                            <p className="text-sm text-gray-600">{p.model}</p>
-                                        </div>
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <h3 className="text-lg font-bold text-white capitalize">{p.provider}</h3>
                                         {p.is_active ? (
-                                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
-                                                <Check size={12} className="inline mr-1" />
+                                            <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+                                                <Check size={12} />
                                                 Active
                                             </span>
                                         ) : (
-                                            <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
-                                                <X size={12} className="inline mr-1" />
+                                            <span className="bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+                                                <X size={12} />
                                                 Disabled
                                             </span>
                                         )}
                                     </div>
-                                    <div className="mt-2 text-sm text-gray-600">
-                                        {p.consecutive_failures > 0 && (
-                                            <span className="text-red-600">⚠️ {p.consecutive_failures} failures</span>
-                                        )}
-                                        {p.last_used_at && (
-                                            <span className="ml-4">Last used: {new Date(p.last_used_at).toLocaleString()}</span>
-                                        )}
-                                    </div>
+                                    <p className="text-sm text-zinc-500 font-mono">{p.model}</p>
+                                    {(p.consecutive_failures > 0 || p.last_used_at) && (
+                                        <div className="mt-2 flex items-center gap-4 text-xs">
+                                            {p.consecutive_failures > 0 && (
+                                                <span className="text-red-400">⚠️ {p.consecutive_failures} failures</span>
+                                            )}
+                                            {p.last_used_at && (
+                                                <span className="text-zinc-600">Last used: {new Date(p.last_used_at).toLocaleString()}</span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
-                                <button
-                                    onClick={() => deleteProvider(p.id)}
-                                    className="text-red-600 hover:text-red-800 p-2"
-                                    title="Delete"
-                                >
-                                    <Trash2 size={20} />
-                                </button>
                             </div>
-                        ))
-                    )}
-                </div>
+                            <button
+                                onClick={() => deleteProvider(p.id)}
+                                className="p-3 rounded-xl text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all opacity-0 group-hover:opacity-100"
+                                title="Delete"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );
