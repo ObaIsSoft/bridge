@@ -136,8 +136,14 @@ export default function BridgeDashboard() {
                                 <p className="text-zinc-400 text-sm">You must perform a Handshake to access this data ethically.</p>
                             </div>
                         </div>
-                        {/* Placeholder for now - automatic selection */}
-                        <button className="bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2">
+                        <button
+                            onClick={() => {
+                                if (perm.contact_email) handleHandshake('EMAIL', perm.contact_email);
+                                else if (perm.twitter_handle) handleHandshake('TWITTER', perm.twitter_handle);
+                                else if (perm.github_handle) handleHandshake('GITHUB', perm.github_handle);
+                                else toast.error("No contact method available to initiate protocol.");
+                            }}
+                            className="bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2">
                             <Send className="h-4 w-4" /> Initiate Protocol
                         </button>
                     </div>

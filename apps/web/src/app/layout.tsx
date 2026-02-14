@@ -27,8 +27,11 @@ export default function RootLayout({
             <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-black/40 backdrop-blur-xl">
               <div className="font-black text-white tracking-widest text-xs uppercase">Bridge.dev</div>
               <div className="ml-auto flex items-center space-x-4">
-                {/* Auth disabled locally */}
-                <div className="h-8 w-8 rounded-full bg-accent animate-pulse" />
+                {/* Auth Status */}
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5">
+                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wider">Demo Admin</span>
+                </div>
               </div>
             </header>
             <main className="flex-1 overflow-y-auto p-6">

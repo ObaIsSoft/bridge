@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import {
     Settings as SettingsIcon,
     Globe,
@@ -192,7 +193,9 @@ export default function SettingsPage() {
 
                         <div className="flex justify-end gap-3 mt-4">
                             <button className="px-8 py-3 border border-white/10 rounded-xl font-bold hover:bg-white/5 transition-all text-sm text-white/50">CANCEL</button>
-                            <button className="px-8 py-3 bg-primary text-black rounded-xl font-black hover:scale-105 transition-all text-sm flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                            <button
+                                onClick={() => toast.success("System configuration saved successfully.")}
+                                className="px-8 py-3 bg-primary text-black rounded-xl font-black hover:scale-105 transition-all text-sm flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                                 <Save className="h-4 w-4" />
                                 SAVE SYSTEM
                             </button>

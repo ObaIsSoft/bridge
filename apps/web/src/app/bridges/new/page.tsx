@@ -23,6 +23,7 @@ export default function NewBridgePage() {
         extraction_schema: '{\n  "title": "string",\n  "url": "url"\n}',
         selectors: '{}'
     });
+    const [jsonError, setJsonError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -92,17 +93,32 @@ export default function NewBridgePage() {
                             2. Data Schema
                         </h3>
                         <p className="text-xs text-muted-foreground">Define what data you want to extract. Our AI will handle the mapping.</p>
-                        <textarea
-                            rows={6}
-                            required
-                            value={formData.extraction_schema}
-                            onChange={e => setFormData({ ...formData, extraction_schema: e.target.value })}
-                            placeholder={`{
+                        <div className="relative">
+                            <textarea
+                                rows={6}
+                                required
+                                value={formData.extraction_schema}
+                                onChange={e => {
+                                    setFormData({ ...formData, extraction_schema: e.target.value });
+                                    try {
+                                        JSON.parse(e.target.value);
+                                        setJsonError(null);
+                                    } catch (err) {
+                                        setJsonError("Invalid JSON format");
+                                    }
+                                }}
+                                placeholder={`{
   "title": "string",
   "link": "url"
 }`}
-                            className="w-full font-mono text-sm rounded-md border bg-background px-3 py-2 outline-none focus:ring-1 focus:ring-ring"
-                        />
+                                className={`w-full font-mono text-sm rounded-md border bg-background px-3 py-2 outline-none focus:ring-1 focus:ring-ring ${jsonError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            />
+                            {jsonError && (
+                                <span className="absolute bottom-2 right-2 text-[10px] text-red-500 font-bold bg-white/10 px-2 py-1 rounded">
+                                    {jsonError}
+                                </span>
+                            )}
+                        </div>
                     </div>
 
                     <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
