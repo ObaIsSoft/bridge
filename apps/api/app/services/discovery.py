@@ -64,3 +64,64 @@ class SchemaDiscoveryService:
         except Exception as e:
             logger.error(f"Error during schema discovery: {e}")
             raise e
+
+    async def detect_official_api(self, url: str) -> Dict[str, Any]:
+        """
+        Surveyor: Detects if an official API exists for the target URL.
+        """
+        import tldextract
+        import aiohttp
+        
+        extracted = tldextract.extract(url)
+        domain = f"{extracted.domain}.{extracted.suffix}"
+        
+        candidates = [
+            f"https://api.{domain}",
+            f"https://developer.{domain}",
+            f"https://dev.{domain}",
+            f"https://docs.{domain}",
+            f"https://portal.{domain}",
+            f"https://platform.{domain}",
+            f"https://www.{domain}/developer",
+            f"https://www.{domain}/developers",
+            f"https://www.{domain}/docs",
+            f"https://www.{domain}/api",
+            f"https://{domain}/.well-known/openapi.json",
+            f"https://{domain}/swagger.json",
+            f"https://{domain}/api/docs"
+        ]
+        
+        found_apis = []
+        
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        
+        # Specific subdomains where a 403 usually means "It exists but is locked" (Strong signal)
+        strong_subdomains = ["api", "developer", "dev"]
+
+        timeout = aiohttp.ClientTimeout(total=5)
+        conn = aiohttp.TCPConnector(limit=10, ssl=False) # Disable SSL verification for speed/compat
+
+        async with aiohttp.ClientSession(headers=headers, timeout=timeout, connector=conn) as session:
+            for candidate in candidates:
+                try:
+                    # Switch to GET, but only read headers first
+                    async with session.get(candidate, allow_redirects=True) as resp:
+                        is_strong = any(s in candidate for s in strong_subdomains)
+                        
+                        # Accept 2xx/3xx OR 403 if it's a strong subdomain
+                        if resp.status < 400 or (resp.status == 403 and is_strong):
+                            found_apis.append(str(resp.url))
+                        else:
+                            logger.info(f"Candidate {candidate} returned status {resp.status}")
+                except Exception as e:
+                    # Ignore connection errors, but log them
+                    logger.debug(f"Failed to check {candidate}: {e}")
+                    continue
+                    
+        return {
+            "official_api_detected": len(found_apis) > 0,
+            "candidates": found_apis,
+            "recommendation": "Use Official API" if found_apis else "Proceed with Bridge"
+        }

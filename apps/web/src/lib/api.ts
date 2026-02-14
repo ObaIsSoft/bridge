@@ -33,6 +33,10 @@ export const bridgesApi = {
         method: 'POST',
         body: JSON.stringify({ url }),
     }),
+    survey: (url: string) => apiFetch('/bridges/survey', {
+        method: 'POST',
+        body: JSON.stringify({ url }),
+    }),
     run: (id: string) => apiFetch(`/bridges/${id}/extract`, { method: 'POST' }),
     getLogs: (id: string) => apiFetch(`/bridges/${id}/logs`),
     getAllLogs: () => apiFetch('/bridges/logs'),

@@ -46,6 +46,25 @@ async def analyze_url(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@router.post("/survey")
+async def survey_url(
+    request: AnalyzeRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Surveyor: Checks for official APIs before allowing a bridge.
+    """
+    service = SchemaDiscoveryService()
+    try:
+        result = await service.detect_official_api(str(request.url))
+        return result
+    except Exception as e:
+        # Don't block the UI if survey fails, just return no detection
+        return {
+            "official_api_detected": False,
+            "error": str(e)
+        }
+
 @router.get("/", response_model=List[BridgeResponse])
 async def list_bridges(
     db: AsyncSession = Depends(get_db)

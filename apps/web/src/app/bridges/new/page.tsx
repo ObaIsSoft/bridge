@@ -177,20 +177,37 @@ Suggested Fields:
                                         toast.error("Please enter a Target URL first");
                                         return;
                                     }
-                                    const toastId = toast.loading("Analyzing page structure...");
+                                    const toastId = toast.loading("Surveying target for official APIs...");
                                     try {
+                                        // 1. Survey the target
+                                        const surveyResult = await bridgesApi.survey(formData.target_url);
+
+                                        if (surveyResult.official_api_detected) {
+                                            toast.error(
+                                                "OFFICIAL API DETECTED! Use Bridge Registry instead.",
+                                                {
+                                                    id: toastId,
+                                                    description: `Found: ${surveyResult.candidates.join(', ')}`,
+                                                    duration: 8000
+                                                }
+                                            );
+                                            return;
+                                        }
+
+                                        // 2. Proceed to Analysis if no API found
+                                        toast.loading("No official API found. Analyzing page structure...", { id: toastId });
                                         const result = await bridgesApi.analyze(formData.target_url);
                                         setFormData(prev => ({
                                             ...prev,
                                             extraction_schema: JSON.stringify(result.schema, null, 2)
                                         }));
-                                        toast.success("Schema auto-detected!", { id: toastId });
+                                        toast.success("Internal Bridge Approved: Schema generated.", { id: toastId });
                                     } catch (err: any) {
-                                        toast.error("Failed to analyze URL: " + (err.response?.data?.detail || err.message), { id: toastId });
+                                        toast.error("Analysis failed: " + (err.response?.data?.detail || err.message), { id: toastId });
                                     }
                                 }}
                                 className="w-full py-2 bg-primary text-primary-foreground rounded-md font-bold text-[10px] shadow-sm hover:bg-primary/90 transition-colors">
-                                AUTO-FILL SCHEMA
+                                RUN SURVEYOR & AUTO-FILL
                             </button>
                         </div>
                     </div>
