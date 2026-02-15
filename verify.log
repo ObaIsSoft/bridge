@@ -1,0 +1,30 @@
+INFO:verify_webmcp:Starting demo server at /Users/obafemi/bridge/apps/webmcp-starter on port 8081
+INFO:verify_webmcp:1. Surveying the demo URL...
+INFO:verify_webmcp:Survey Status: 200
+INFO:verify_webmcp:Survey Result: {'official_api_detected': False, 'candidates': [], 'has_webmcp': True, 'webmcp_tools': [{'tool_name': 'search_restaurants', 'tool_type': 'unknown', 'description': "Search for restaurants by cuisine type, name, or dietary preference (e.g. 'vegan', 'spicy'). Returns a list with IDs, ratings, delivery times. Use when the user asks what's available or wants a specific cuisine.", 'parameters_schema': {}}, {'tool_name': 'get_menu', 'tool_type': 'unknown', 'description': 'Get the full menu for a restaurant by ID. Returns all items with IDs, names, descriptions, prices, and dietary tags. Also navigates the UI to that restaurant. You need item IDs from here to use add_to_cart.', 'parameters_schema': {}}, {'tool_name': 'add_to_cart', 'tool_type': 'unknown', 'description': 'Add a menu item to the cart. Get restaurant_id and item_id from get_menu first. Quantity defaults to 1. If item already in cart, quantity increases.', 'parameters_schema': {}}, {'tool_name': 'remove_from_cart', 'tool_type': 'unknown', 'description': 'Remove one quantity of an item from the cart by item_id. Removes entirely if quantity reaches zero.', 'parameters_schema': {}}, {'tool_name': 'get_cart', 'tool_type': 'unknown', 'description': 'Get current cart contents, quantities, prices, and total. Read-only. Use to verify the order before checkout.', 'parameters_schema': {}}, {'tool_name': 'clear_cart', 'tool_type': 'unknown', 'description': 'Remove all items from the cart and reset promo codes. Use when user wants to start over.', 'parameters_schema': {}}, {'tool_name': 'apply_promo_code', 'tool_type': 'unknown', 'description': 'Apply a promotional discount code. Valid codes: WELCOME20 (20% off), FREEDELIVERY (free delivery), SAVE5 ($5 off). Returns descriptive error with valid codes if invalid, so the agent can suggest alternatives.', 'parameters_schema': {}}, {'tool_name': 'get_order_status', 'tool_type': 'unknown', 'description': "Check the status of the current order. Returns order ID, status, items, total, and ETA. Use when user asks 'where's my food?'", 'parameters_schema': {}}], 'recommendation': 'Use WebMCP (Agent-Ready)'}
+INFO:verify_webmcp:Discovered 8 tools.
+INFO:verify_webmcp:2. Creating Bridge with discovered tools...
+INFO:verify_webmcp:Create Status: 200
+INFO:verify_webmcp:Bridge Created: ccfc95dc-8d8c-490a-9eb7-f0a4ba5ad545
+INFO:verify_webmcp:3. Running Extraction Task (Test Fallback/Execution)...
+INFO:verify_webmcp:Task Status: 401
+ERROR:verify_webmcp:Verification Failed: 'task_id'
+Traceback (most recent call last):
+  File "/Users/obafemi/bridge/apps/api/../../verify_webmcp_e2e.py", line 105, in <module>
+    asyncio.run(run_verification())
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/obafemi/bridge/apps/api/../../verify_webmcp_e2e.py", line 100, in run_verification
+    raise e
+  File "/Users/obafemi/bridge/apps/api/../../verify_webmcp_e2e.py", line 84, in run_verification
+    task_id = task_data["task_id"]
+              ~~~~~~~~~^^^^^^^^^^^
+KeyError: 'task_id'

@@ -39,9 +39,9 @@ async def analyze_url(
     """
     Analyze a URL and return a suggested JSON extraction schema.
     """
-    service = SchemaDiscoveryService()
+    service = SchemaDiscoveryService(db)
     try:
-        schema = await service.discover_schema(str(request.url))
+        schema = await service.discover_schema(str(request.url), UUID("00000000-0000-0000-0000-000000000000")) # TODO: Get real user
         return {"schema": schema}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -54,7 +54,7 @@ async def survey_url(
     """
     Surveyor: Checks for official APIs before allowing a bridge.
     """
-    service = SchemaDiscoveryService()
+    service = SchemaDiscoveryService(db)
     try:
         result = await service.detect_official_api(str(request.url))
         return result
@@ -65,11 +65,13 @@ async def survey_url(
             "error": str(e)
         }
 
+from sqlalchemy.orm import selectinload
+
 @router.get("/", response_model=List[BridgeResponse])
 async def list_bridges(
     db: AsyncSession = Depends(get_db)
 ):
-    result = await db.execute(select(Bridge))
+    result = await db.execute(select(Bridge).options(selectinload(Bridge.webmcp_tools)))
     return result.scalars().all()
 
 @router.get("/stats")
@@ -195,14 +197,41 @@ async def create_bridge(
         else:
             break
     
+    from app.models import WebMCPTool
+    
+    bridge_data = bridge_in.model_dump(exclude={"slug", "webmcp_tools"})
+    
     bridge = Bridge(
-        **bridge_in.model_dump(exclude={"slug"}),
+        **bridge_data,
         user_id=user.id,
         slug=slug
     )
     db.add(bridge)
     await db.commit()
     await db.refresh(bridge)
+    
+    # Handle WebMCP Tools
+    if bridge_in.webmcp_tools:
+        for tool_data in bridge_in.webmcp_tools:
+            tool = WebMCPTool(
+                bridge_id=bridge.id,
+                **tool_data.model_dump()
+            )
+            db.add(tool)
+        
+        # Update count
+        bridge.webmcp_tool_count = len(bridge_in.webmcp_tools)
+        bridge.has_webmcp = True
+        await db.commit()
+
+        # Eagerly load the relationship for the response
+        result = await db.execute(
+            select(Bridge)
+            .where(Bridge.id == bridge.id)
+            .options(selectinload(Bridge.webmcp_tools))
+        )
+        bridge = result.scalar_one()
+        
     return bridge
 
 @router.get("/{bridge_identifier}", response_model=BridgeResponse)
@@ -216,17 +245,31 @@ async def get_bridge(
     bridge = None
     try:
         bridge_uuid = uuid.UUID(bridge_identifier)
-        bridge = await db.get(Bridge, bridge_uuid)
+        result = await db.execute(
+            select(Bridge)
+            .where(Bridge.id == bridge_uuid)
+            .options(selectinload(Bridge.webmcp_tools))
+        )
+        bridge = result.scalar_one_or_none()
     except ValueError:
         pass
         
     if not bridge:
-        result = await db.execute(select(Bridge).where(Bridge.slug == bridge_identifier))
+        result = await db.execute(
+            select(Bridge)
+            .where(Bridge.slug == bridge_identifier)
+            .options(selectinload(Bridge.webmcp_tools))
+        )
         bridge = result.scalar_one_or_none()
 
     # Try Domain
     if not bridge and "." in bridge_identifier:
-        result = await db.execute(select(Bridge).where(Bridge.domain == bridge_identifier).limit(1))
+        result = await db.execute(
+            select(Bridge)
+            .where(Bridge.domain == bridge_identifier)
+            .options(selectinload(Bridge.webmcp_tools))
+            .limit(1)
+        )
         bridge = result.scalar_one_or_none()
 
     if not bridge:

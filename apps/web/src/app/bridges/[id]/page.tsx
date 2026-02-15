@@ -15,7 +15,10 @@ import {
     CheckCircle2,
     AlertTriangle,
     Lock,
-    Settings
+    Settings,
+    Code2,
+    Terminal,
+    Cpu
 } from 'lucide-react';
 import Link from 'next/link';
 import { bridgesApi, handshakeApi } from '@/lib/api';
@@ -78,12 +81,48 @@ export default function BridgeDashboard() {
                     <Link href={`/bridges/${id}/settings`} className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors border border-white/5 hover:border-white/10">
                         <Settings className="h-4 w-4" /> Settings
                     </Link>
+
+                    {bridge.has_webmcp && (
+                        <div className="px-4 py-2 rounded-full border bg-blue-500/10 border-blue-500/20 text-blue-400 flex items-center gap-2">
+                            <Cpu className="h-5 w-5" />
+                            <span className="font-bold tracking-wider">WEBMCP ENABLED</span>
+                        </div>
+                    )}
+
                     <div className={`px-4 py-2 rounded-full border ${isAllowed ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-red-500/10 border-red-500/20 text-red-500'} flex items-center gap-2`}>
                         {isAllowed ? <CheckCircle2 className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
                         <span className="font-bold tracking-wider">{perm.status || "UNKNOWN"}</span>
                     </div>
                 </div>
             </div>
+
+            {/* WebMCP Status Section */}
+            {bridge.has_webmcp && (
+                <div className="bg-blue-900/10 rounded-3xl p-8 border border-blue-500/20">
+                    <div className="flex items-center gap-3 mb-6">
+                        <Cpu className="h-8 w-8 text-blue-400" />
+                        <div>
+                            <h2 className="text-2xl font-bold text-white">WebMCP Integration</h2>
+                            <p className="text-zinc-400">Direct agent-to-agent protocol enabled</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {bridge.webmcp_tools && bridge.webmcp_tools.map((tool: any) => (
+                            <div key={tool.id} className="bg-black/30 p-4 rounded-xl border border-white/5 flex flex-col gap-2">
+                                <div className="flex justify-between items-start">
+                                    <span className="font-mono font-bold text-blue-300">{tool.tool_name}</span>
+                                    <span className="text-xs bg-white/10 px-2 py-1 rounded">{tool.tool_type}</span>
+                                </div>
+                                <p className="text-sm text-zinc-500 line-clamp-2">{tool.description}</p>
+                            </div>
+                        ))}
+                        {(!bridge.webmcp_tools || bridge.webmcp_tools.length === 0) && (
+                            <p className="text-zinc-500 italic">No tools advertised, but protocol is active.</p>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Ethical Moat */}
             <div className="glass rounded-3xl p-8 border border-white/5">

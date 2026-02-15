@@ -1,0 +1,284 @@
+INFO:     Will watch for changes in these directories: ['/Users/obafemi/bridge/apps/api']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [5651] using WatchFiles
+/Users/obafemi/bridge/apps/api/app/services/llm/providers/google.py:12: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+WARNING:app.core.encryption:No ENCRYPTION_KEY found in environment. Generating temporary key (data will not persist across restarts)
+INFO:     Started server process [5709]
+INFO:     Waiting for application startup.
+INFO:main:Starting API Bridge Platform...
+INFO:security_watcher:Starting Security Watcher on /Users/obafemi/bridge/apps...
+INFO:     Application startup complete.
+INFO:app.services.webmcp:BROWSER CONSOLE: Polyfill script starting...
+INFO:app.services.webmcp:BROWSER CONSOLE: Injecting WebMCP Shim...
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim injected successfully. window.modelContext is now: object
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: search_restaurants
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: get_menu
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: add_to_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: remove_from_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: get_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: clear_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: apply_promo_code
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: get_order_status
+INFO:app.services.webmcp:WebMCP Check Result: True
+INFO:app.services.webmcp:BROWSER CONSOLE: Failed to load resource: the server responded with a status of 404 (File not found)
+INFO:app.services.webmcp:Discovered 8 tools on http://localhost:8081/food-app.html
+INFO:app.services.discovery:WebMCP detected on http://localhost:8081/food-app.html: 8 tools
+INFO:     127.0.0.1:49627 - "POST /api/v1/bridges/survey HTTP/1.1" 200 OK
+2026-02-15 10:01:10,155 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-15 10:01:10,204 INFO sqlalchemy.engine.Engine SELECT users.id, users.clerk_id, users.email, users.created_at, users.updated_at 
+FROM users
+ LIMIT ? OFFSET ?
+INFO:sqlalchemy.engine.Engine:SELECT users.id, users.clerk_id, users.email, users.created_at, users.updated_at 
+FROM users
+ LIMIT ? OFFSET ?
+2026-02-15 10:01:10,204 INFO sqlalchemy.engine.Engine [generated in 0.00072s] (1, 0)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00072s] (1, 0)
+2026-02-15 10:01:10,213 INFO sqlalchemy.engine.Engine SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.slug = ?
+INFO:sqlalchemy.engine.Engine:SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.slug = ?
+2026-02-15 10:01:10,213 INFO sqlalchemy.engine.Engine [generated in 0.00028s] ('midnight-eats-demo',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00028s] ('midnight-eats-demo',)
+2026-02-15 10:01:10,222 INFO sqlalchemy.engine.Engine INSERT INTO bridges (id, user_id, name, slug, domain, target_url, extraction_schema, selectors, auth_config, interaction_script, session_data, status, last_successful_extraction, last_error, created_at, updated_at, has_webmcp, webmcp_tool_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+INFO:sqlalchemy.engine.Engine:INSERT INTO bridges (id, user_id, name, slug, domain, target_url, extraction_schema, selectors, auth_config, interaction_script, session_data, status, last_successful_extraction, last_error, created_at, updated_at, has_webmcp, webmcp_tool_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-02-15 10:01:10,222 INFO sqlalchemy.engine.Engine [generated in 0.00066s] ('75dc8dd1d72041dba0cd0fc5e4076789', '06d07dabf4744129970578a8f7fec560', 'Midnight Eats Demo', 'midnight-eats-demo', 'localhost', 'http://localhost:8081/food-app.html', '{"type": "object"}', 'null', 'null', 'null', 'null', 'active', None, None, '2026-02-15 09:01:10.222418', '2026-02-15 09:01:10.222426', 0, 0)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00066s] ('75dc8dd1d72041dba0cd0fc5e4076789', '06d07dabf4744129970578a8f7fec560', 'Midnight Eats Demo', 'midnight-eats-demo', 'localhost', 'http://localhost:8081/food-app.html', '{"type": "object"}', 'null', 'null', 'null', 'null', 'active', None, None, '2026-02-15 09:01:10.222418', '2026-02-15 09:01:10.222426', 0, 0)
+2026-02-15 10:01:10,224 INFO sqlalchemy.engine.Engine COMMIT
+INFO:sqlalchemy.engine.Engine:COMMIT
+2026-02-15 10:01:10,227 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-15 10:01:10,229 INFO sqlalchemy.engine.Engine SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+INFO:sqlalchemy.engine.Engine:SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+2026-02-15 10:01:10,229 INFO sqlalchemy.engine.Engine [generated in 0.00019s] ('75dc8dd1d72041dba0cd0fc5e4076789',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00019s] ('75dc8dd1d72041dba0cd0fc5e4076789',)
+2026-02-15 10:01:10,233 INFO sqlalchemy.engine.Engine UPDATE bridges SET updated_at=?, has_webmcp=?, webmcp_tool_count=? WHERE bridges.id = ?
+INFO:sqlalchemy.engine.Engine:UPDATE bridges SET updated_at=?, has_webmcp=?, webmcp_tool_count=? WHERE bridges.id = ?
+2026-02-15 10:01:10,233 INFO sqlalchemy.engine.Engine [generated in 0.00029s] ('2026-02-15 09:01:10.233516', 1, 8, '75dc8dd1d72041dba0cd0fc5e4076789')
+INFO:sqlalchemy.engine.Engine:[generated in 0.00029s] ('2026-02-15 09:01:10.233516', 1, 8, '75dc8dd1d72041dba0cd0fc5e4076789')
+2026-02-15 10:01:10,237 INFO sqlalchemy.engine.Engine INSERT INTO webmcp_tools (id, bridge_id, tool_name, tool_type, description, parameters_schema, is_available, last_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+INFO:sqlalchemy.engine.Engine:INSERT INTO webmcp_tools (id, bridge_id, tool_name, tool_type, description, parameters_schema, is_available, last_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-02-15 10:01:10,237 INFO sqlalchemy.engine.Engine [generated in 0.00058s (insertmanyvalues) 1/1 (unordered)] ('865972417344497da9bf752bdecb56d5', '75dc8dd1d72041dba0cd0fc5e4076789', 'search_restaurants', 'unknown', "Search for restaurants by cuisine type, name, or dietary preference (e.g. 'vegan', 'spicy'). Returns a list with IDs, ratings, delivery times. Use when the user asks what's available or wants a specific cuisine.", '{}', 1, None, '2026-02-15 09:01:10.236947', '2026-02-15 09:01:10.236953', '1f024c236b034bd69ba6cbd63292fccc', '75dc8dd1d72041dba0cd0fc5e4076789', 'get_menu', 'unknown', 'Get the full menu for a restaurant by ID. Returns all items with IDs, names, descriptions, prices, and dietary tags. Also navigates the UI to that restaurant. You need item IDs from here to use add_to_cart.', '{}', 1, None, '2026-02-15 09:01:10.236972', '2026-02-15 09:01:10.236974', '840b56b5bdea43999862cf158999708b', '75dc8dd1d72041dba0cd0fc5e4076789', 'add_to_cart', 'unknown', 'Add a menu item to the cart. Get restaurant_id and item_id from get_menu first. Quantity defaults to 1. If item already in cart, quantity increases.', '{}', 1, None, '2026-02-15 09:01:10.236983', '2026-02-15 09:01:10.236985', 'cbcce614af3a46cbbf30f141cc5aa4ef', '75dc8dd1d72041dba0cd0fc5e4076789', 'remove_from_cart', 'unknown', 'Remove one quantity of an item from the cart by item_id. Removes entirely if quantity reaches zero.', '{}', 1, None, '2026-02-15 09:01:10.236994', '2026-02-15 09:01:10.236995', 'd55e608338a646d59b0919e79bf78396', '75dc8dd1d72041dba0cd0fc5e4076789', 'get_cart', 'unknown', 'Get current cart contents, quantities, prices, and total. Read-only. Use to verify the order before checkout.', '{}', 1, None, '2026-02-15 09:01:10.237003', '2026-02-15 09:01:10.237005', '4cd219342c8c41a99bc34c1641819deb', '75dc8dd1d72041dba0cd0fc5e4076789', 'clear_cart', 'unknown', 'Remove all items from the cart and reset promo codes. Use when user wants to start over.', '{}', 1, None, '2026-02-15 09:01:10.237012', '2026-02-15 09:01:10.237014', 'e432db29b6ff4fe9801d64defdaa3564', '75dc8dd1d72041dba0cd0fc5e4076789', 'apply_promo_code', 'unknown', 'Apply a promotional discount code. Valid codes: WELCOME20 (20% off), FREEDELIVERY (free delivery), SAVE5 ($5 off). Returns descriptive error with valid codes if invalid, so the agent can suggest alternatives.', '{}', 1, None, '2026-02-15 09:01:10.237021', '2026-02-15 09:01:10.237023', 'c434a40cb4ee4a08baf2c059bb19959d', '75dc8dd1d72041dba0cd0fc5e4076789', 'get_order_status', 'unknown', "Check the status of the current order. Returns order ID, status, items, total, and ETA. Use when user asks 'where's my food?'", '{}', 1, None, '2026-02-15 09:01:10.237030', '2026-02-15 09:01:10.237032')
+INFO:sqlalchemy.engine.Engine:[generated in 0.00058s (insertmanyvalues) 1/1 (unordered)] ('865972417344497da9bf752bdecb56d5', '75dc8dd1d72041dba0cd0fc5e4076789', 'search_restaurants', 'unknown', "Search for restaurants by cuisine type, name, or dietary preference (e.g. 'vegan', 'spicy'). Returns a list with IDs, ratings, delivery times. Use when the user asks what's available or wants a specific cuisine.", '{}', 1, None, '2026-02-15 09:01:10.236947', '2026-02-15 09:01:10.236953', '1f024c236b034bd69ba6cbd63292fccc', '75dc8dd1d72041dba0cd0fc5e4076789', 'get_menu', 'unknown', 'Get the full menu for a restaurant by ID. Returns all items with IDs, names, descriptions, prices, and dietary tags. Also navigates the UI to that restaurant. You need item IDs from here to use add_to_cart.', '{}', 1, None, '2026-02-15 09:01:10.236972', '2026-02-15 09:01:10.236974', '840b56b5bdea43999862cf158999708b', '75dc8dd1d72041dba0cd0fc5e4076789', 'add_to_cart', 'unknown', 'Add a menu item to the cart. Get restaurant_id and item_id from get_menu first. Quantity defaults to 1. If item already in cart, quantity increases.', '{}', 1, None, '2026-02-15 09:01:10.236983', '2026-02-15 09:01:10.236985', 'cbcce614af3a46cbbf30f141cc5aa4ef', '75dc8dd1d72041dba0cd0fc5e4076789', 'remove_from_cart', 'unknown', 'Remove one quantity of an item from the cart by item_id. Removes entirely if quantity reaches zero.', '{}', 1, None, '2026-02-15 09:01:10.236994', '2026-02-15 09:01:10.236995', 'd55e608338a646d59b0919e79bf78396', '75dc8dd1d72041dba0cd0fc5e4076789', 'get_cart', 'unknown', 'Get current cart contents, quantities, prices, and total. Read-only. Use to verify the order before checkout.', '{}', 1, None, '2026-02-15 09:01:10.237003', '2026-02-15 09:01:10.237005', '4cd219342c8c41a99bc34c1641819deb', '75dc8dd1d72041dba0cd0fc5e4076789', 'clear_cart', 'unknown', 'Remove all items from the cart and reset promo codes. Use when user wants to start over.', '{}', 1, None, '2026-02-15 09:01:10.237012', '2026-02-15 09:01:10.237014', 'e432db29b6ff4fe9801d64defdaa3564', '75dc8dd1d72041dba0cd0fc5e4076789', 'apply_promo_code', 'unknown', 'Apply a promotional discount code. Valid codes: WELCOME20 (20% off), FREEDELIVERY (free delivery), SAVE5 ($5 off). Returns descriptive error with valid codes if invalid, so the agent can suggest alternatives.', '{}', 1, None, '2026-02-15 09:01:10.237021', '2026-02-15 09:01:10.237023', 'c434a40cb4ee4a08baf2c059bb19959d', '75dc8dd1d72041dba0cd0fc5e4076789', 'get_order_status', 'unknown', "Check the status of the current order. Returns order ID, status, items, total, and ETA. Use when user asks 'where's my food?'", '{}', 1, None, '2026-02-15 09:01:10.237030', '2026-02-15 09:01:10.237032')
+2026-02-15 10:01:10,239 INFO sqlalchemy.engine.Engine COMMIT
+INFO:sqlalchemy.engine.Engine:COMMIT
+2026-02-15 10:01:10,241 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-15 10:01:10,241 INFO sqlalchemy.engine.Engine SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+INFO:sqlalchemy.engine.Engine:SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+2026-02-15 10:01:10,241 INFO sqlalchemy.engine.Engine [cached since 0.01199s ago] ('75dc8dd1d72041dba0cd0fc5e4076789',)
+INFO:sqlalchemy.engine.Engine:[cached since 0.01199s ago] ('75dc8dd1d72041dba0cd0fc5e4076789',)
+2026-02-15 10:01:10,247 INFO sqlalchemy.engine.Engine SELECT webmcp_tools.id AS webmcp_tools_id, webmcp_tools.bridge_id AS webmcp_tools_bridge_id, webmcp_tools.tool_name AS webmcp_tools_tool_name, webmcp_tools.tool_type AS webmcp_tools_tool_type, webmcp_tools.description AS webmcp_tools_description, webmcp_tools.parameters_schema AS webmcp_tools_parameters_schema, webmcp_tools.is_available AS webmcp_tools_is_available, webmcp_tools.last_verified_at AS webmcp_tools_last_verified_at, webmcp_tools.created_at AS webmcp_tools_created_at, webmcp_tools.updated_at AS webmcp_tools_updated_at 
+FROM webmcp_tools 
+WHERE ? = webmcp_tools.bridge_id
+INFO:sqlalchemy.engine.Engine:SELECT webmcp_tools.id AS webmcp_tools_id, webmcp_tools.bridge_id AS webmcp_tools_bridge_id, webmcp_tools.tool_name AS webmcp_tools_tool_name, webmcp_tools.tool_type AS webmcp_tools_tool_type, webmcp_tools.description AS webmcp_tools_description, webmcp_tools.parameters_schema AS webmcp_tools_parameters_schema, webmcp_tools.is_available AS webmcp_tools_is_available, webmcp_tools.last_verified_at AS webmcp_tools_last_verified_at, webmcp_tools.created_at AS webmcp_tools_created_at, webmcp_tools.updated_at AS webmcp_tools_updated_at 
+FROM webmcp_tools 
+WHERE ? = webmcp_tools.bridge_id
+2026-02-15 10:01:10,248 INFO sqlalchemy.engine.Engine [generated in 0.00082s] ('75dc8dd1d72041dba0cd0fc5e4076789',)
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/test.db-journal. Running security scan...
+INFO:sqlalchemy.engine.Engine:[generated in 0.00082s] ('75dc8dd1d72041dba0cd0fc5e4076789',)
+2026-02-15 10:01:10,250 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/test.db-journal.
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/test.db-journal. Running security scan...
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/test.db-journal.
+INFO:     127.0.0.1:49650 - "POST /api/v1/bridges/ HTTP/1.1" 500 Internal Server Error
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/test.db-journal. Running security scan...
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/test.db-journal.
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 419, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/middleware/cors.py", line 83, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/routing.py", line 758, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/routing.py", line 778, in app
+    await route.handle(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/routing.py", line 299, in handle
+    await self.app(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/routing.py", line 79, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/starlette/routing.py", line 74, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/fastapi/routing.py", line 315, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/Users/obafemi/Library/Caches/pypoetry/virtualenvs/apibridge-api-dzD3TG5b-py3.13/lib/python3.13/site-packages/fastapi/routing.py", line 155, in serialize_response
+    raise ResponseValidationError(
+        errors=_normalize_errors(errors), body=response_content
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'get_attribute_error', 'loc': ('response', 'webmcp_tools'), 'msg': "Error extracting attribute: MissingGreenlet: greenlet_spawn has not been called; can't call await_only() here. Was IO attempted in an unexpected place? (Background on this error at: https://sqlalche.me/e/20/xd2s)", 'input': <app.models.models.Bridge object at 0x110b22ba0>, 'ctx': {'error': "MissingGreenlet: greenlet_spawn has not been called; can't call await_only() here. Was IO attempted in an unexpected place? (Background on this error at: https://sqlalche.me/e/20/xd2s)"}, 'url': 'https://errors.pydantic.dev/2.12/v/get_attribute_error'}
+
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/app/routers/bridge.py. Running security scan...
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/app/routers/bridge.py.
+WARNING:  WatchFiles detected changes in 'app/routers/bridge.py'. Reloading...
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/app/routers/bridge.py. Running security scan...
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/app/routers/bridge.py.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:main:Shutting down API Bridge Platform...
+INFO:security_watcher:Stopping Security Watcher...
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5709]
+WARNING:  WatchFiles detected changes in 'app/routers/bridge.py'. Reloading...
+/Users/obafemi/bridge/apps/api/app/services/llm/providers/google.py:12: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+WARNING:app.core.encryption:No ENCRYPTION_KEY found in environment. Generating temporary key (data will not persist across restarts)
+INFO:     Started server process [6020]
+INFO:     Waiting for application startup.
+INFO:main:Starting API Bridge Platform...
+INFO:security_watcher:Starting Security Watcher on /Users/obafemi/bridge/apps...
+INFO:     Application startup complete.
+INFO:app.services.webmcp:BROWSER CONSOLE: Polyfill script starting...
+INFO:app.services.webmcp:BROWSER CONSOLE: Injecting WebMCP Shim...
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim injected successfully. window.modelContext is now: object
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: search_restaurants
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: get_menu
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: add_to_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: remove_from_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: get_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: clear_cart
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: apply_promo_code
+INFO:app.services.webmcp:BROWSER CONSOLE: Shim: Tool registered: get_order_status
+INFO:app.services.webmcp:WebMCP Check Result: True
+INFO:app.services.webmcp:BROWSER CONSOLE: Failed to load resource: the server responded with a status of 404 (File not found)
+INFO:app.services.webmcp:Discovered 8 tools on http://localhost:8081/food-app.html
+INFO:app.services.discovery:WebMCP detected on http://localhost:8081/food-app.html: 8 tools
+INFO:     127.0.0.1:49672 - "POST /api/v1/bridges/survey HTTP/1.1" 200 OK
+2026-02-15 10:02:34,958 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-15 10:02:35,019 INFO sqlalchemy.engine.Engine SELECT users.id, users.clerk_id, users.email, users.created_at, users.updated_at 
+FROM users
+ LIMIT ? OFFSET ?
+INFO:sqlalchemy.engine.Engine:SELECT users.id, users.clerk_id, users.email, users.created_at, users.updated_at 
+FROM users
+ LIMIT ? OFFSET ?
+2026-02-15 10:02:35,019 INFO sqlalchemy.engine.Engine [generated in 0.00039s] (1, 0)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00039s] (1, 0)
+2026-02-15 10:02:35,038 INFO sqlalchemy.engine.Engine SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.slug = ?
+INFO:sqlalchemy.engine.Engine:SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.slug = ?
+2026-02-15 10:02:35,038 INFO sqlalchemy.engine.Engine [generated in 0.00042s] ('midnight-eats-demo',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00042s] ('midnight-eats-demo',)
+2026-02-15 10:02:35,042 INFO sqlalchemy.engine.Engine SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.slug = ?
+INFO:sqlalchemy.engine.Engine:SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.slug = ?
+2026-02-15 10:02:35,042 INFO sqlalchemy.engine.Engine [cached since 0.004216s ago] ('midnight-eats-demo-1',)
+INFO:sqlalchemy.engine.Engine:[cached since 0.004216s ago] ('midnight-eats-demo-1',)
+2026-02-15 10:02:35,063 INFO sqlalchemy.engine.Engine INSERT INTO bridges (id, user_id, name, slug, domain, target_url, extraction_schema, selectors, auth_config, interaction_script, session_data, status, last_successful_extraction, last_error, created_at, updated_at, has_webmcp, webmcp_tool_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+INFO:sqlalchemy.engine.Engine:INSERT INTO bridges (id, user_id, name, slug, domain, target_url, extraction_schema, selectors, auth_config, interaction_script, session_data, status, last_successful_extraction, last_error, created_at, updated_at, has_webmcp, webmcp_tool_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-02-15 10:02:35,063 INFO sqlalchemy.engine.Engine [generated in 0.00338s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545', '06d07dabf4744129970578a8f7fec560', 'Midnight Eats Demo', 'midnight-eats-demo-1', 'localhost', 'http://localhost:8081/food-app.html', '{"type": "object"}', 'null', 'null', 'null', 'null', 'active', None, None, '2026-02-15 09:02:35.062990', '2026-02-15 09:02:35.063000', 0, 0)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00338s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545', '06d07dabf4744129970578a8f7fec560', 'Midnight Eats Demo', 'midnight-eats-demo-1', 'localhost', 'http://localhost:8081/food-app.html', '{"type": "object"}', 'null', 'null', 'null', 'null', 'active', None, None, '2026-02-15 09:02:35.062990', '2026-02-15 09:02:35.063000', 0, 0)
+2026-02-15 10:02:35,073 INFO sqlalchemy.engine.Engine COMMIT
+INFO:sqlalchemy.engine.Engine:COMMIT
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/test.db-journal. Running security scan...
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/test.db-journal.
+2026-02-15 10:02:35,101 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-15 10:02:35,104 INFO sqlalchemy.engine.Engine SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+INFO:sqlalchemy.engine.Engine:SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+2026-02-15 10:02:35,105 INFO sqlalchemy.engine.Engine [generated in 0.00093s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00093s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545',)
+2026-02-15 10:02:35,122 INFO sqlalchemy.engine.Engine UPDATE bridges SET updated_at=?, has_webmcp=?, webmcp_tool_count=? WHERE bridges.id = ?
+INFO:sqlalchemy.engine.Engine:UPDATE bridges SET updated_at=?, has_webmcp=?, webmcp_tool_count=? WHERE bridges.id = ?
+2026-02-15 10:02:35,122 INFO sqlalchemy.engine.Engine [generated in 0.00039s] ('2026-02-15 09:02:35.122078', 1, 8, 'ccfc95dc8d8c490a9eb7f0a4ba5ad545')
+INFO:sqlalchemy.engine.Engine:[generated in 0.00039s] ('2026-02-15 09:02:35.122078', 1, 8, 'ccfc95dc8d8c490a9eb7f0a4ba5ad545')
+2026-02-15 10:02:35,128 INFO sqlalchemy.engine.Engine INSERT INTO webmcp_tools (id, bridge_id, tool_name, tool_type, description, parameters_schema, is_available, last_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+INFO:sqlalchemy.engine.Engine:INSERT INTO webmcp_tools (id, bridge_id, tool_name, tool_type, description, parameters_schema, is_available, last_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-02-15 10:02:35,128 INFO sqlalchemy.engine.Engine [generated in 0.00082s (insertmanyvalues) 1/1 (unordered)] ('ee37fc9f045d479dacc03dbd27873280', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'search_restaurants', 'unknown', "Search for restaurants by cuisine type, name, or dietary preference (e.g. 'vegan', 'spicy'). Returns a list with IDs, ratings, delivery times. Use when the user asks what's available or wants a specific cuisine.", '{}', 1, None, '2026-02-15 09:02:35.127814', '2026-02-15 09:02:35.127822', '5444981214654f3cb6db4cd0c7d2fa5c', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'get_menu', 'unknown', 'Get the full menu for a restaurant by ID. Returns all items with IDs, names, descriptions, prices, and dietary tags. Also navigates the UI to that restaurant. You need item IDs from here to use add_to_cart.', '{}', 1, None, '2026-02-15 09:02:35.127844', '2026-02-15 09:02:35.127847', '24bc0a4d8f624590944b06080de8fb95', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'add_to_cart', 'unknown', 'Add a menu item to the cart. Get restaurant_id and item_id from get_menu first. Quantity defaults to 1. If item already in cart, quantity increases.', '{}', 1, None, '2026-02-15 09:02:35.127863', '2026-02-15 09:02:35.127866', 'bb7e5d2070cb4583b7660821906f33d9', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'remove_from_cart', 'unknown', 'Remove one quantity of an item from the cart by item_id. Removes entirely if quantity reaches zero.', '{}', 1, None, '2026-02-15 09:02:35.127880', '2026-02-15 09:02:35.127883', '8cb84bccaad048049c32cc9bd2d6cc2a', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'get_cart', 'unknown', 'Get current cart contents, quantities, prices, and total. Read-only. Use to verify the order before checkout.', '{}', 1, None, '2026-02-15 09:02:35.127896', '2026-02-15 09:02:35.127899', '3fb5d200ecb242bb9650b80105f6ef7b', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'clear_cart', 'unknown', 'Remove all items from the cart and reset promo codes. Use when user wants to start over.', '{}', 1, None, '2026-02-15 09:02:35.127913', '2026-02-15 09:02:35.127916', '203610ff5b0642d5ae818a8702279c45', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'apply_promo_code', 'unknown', 'Apply a promotional discount code. Valid codes: WELCOME20 (20% off), FREEDELIVERY (free delivery), SAVE5 ($5 off). Returns descriptive error with valid codes if invalid, so the agent can suggest alternatives.', '{}', 1, None, '2026-02-15 09:02:35.127929', '2026-02-15 09:02:35.127932', '9232d329c0a84e548ee9cb85b8942860', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'get_order_status', 'unknown', "Check the status of the current order. Returns order ID, status, items, total, and ETA. Use when user asks 'where's my food?'", '{}', 1, None, '2026-02-15 09:02:35.127945', '2026-02-15 09:02:35.127948')
+INFO:sqlalchemy.engine.Engine:[generated in 0.00082s (insertmanyvalues) 1/1 (unordered)] ('ee37fc9f045d479dacc03dbd27873280', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'search_restaurants', 'unknown', "Search for restaurants by cuisine type, name, or dietary preference (e.g. 'vegan', 'spicy'). Returns a list with IDs, ratings, delivery times. Use when the user asks what's available or wants a specific cuisine.", '{}', 1, None, '2026-02-15 09:02:35.127814', '2026-02-15 09:02:35.127822', '5444981214654f3cb6db4cd0c7d2fa5c', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'get_menu', 'unknown', 'Get the full menu for a restaurant by ID. Returns all items with IDs, names, descriptions, prices, and dietary tags. Also navigates the UI to that restaurant. You need item IDs from here to use add_to_cart.', '{}', 1, None, '2026-02-15 09:02:35.127844', '2026-02-15 09:02:35.127847', '24bc0a4d8f624590944b06080de8fb95', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'add_to_cart', 'unknown', 'Add a menu item to the cart. Get restaurant_id and item_id from get_menu first. Quantity defaults to 1. If item already in cart, quantity increases.', '{}', 1, None, '2026-02-15 09:02:35.127863', '2026-02-15 09:02:35.127866', 'bb7e5d2070cb4583b7660821906f33d9', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'remove_from_cart', 'unknown', 'Remove one quantity of an item from the cart by item_id. Removes entirely if quantity reaches zero.', '{}', 1, None, '2026-02-15 09:02:35.127880', '2026-02-15 09:02:35.127883', '8cb84bccaad048049c32cc9bd2d6cc2a', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'get_cart', 'unknown', 'Get current cart contents, quantities, prices, and total. Read-only. Use to verify the order before checkout.', '{}', 1, None, '2026-02-15 09:02:35.127896', '2026-02-15 09:02:35.127899', '3fb5d200ecb242bb9650b80105f6ef7b', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'clear_cart', 'unknown', 'Remove all items from the cart and reset promo codes. Use when user wants to start over.', '{}', 1, None, '2026-02-15 09:02:35.127913', '2026-02-15 09:02:35.127916', '203610ff5b0642d5ae818a8702279c45', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'apply_promo_code', 'unknown', 'Apply a promotional discount code. Valid codes: WELCOME20 (20% off), FREEDELIVERY (free delivery), SAVE5 ($5 off). Returns descriptive error with valid codes if invalid, so the agent can suggest alternatives.', '{}', 1, None, '2026-02-15 09:02:35.127929', '2026-02-15 09:02:35.127932', '9232d329c0a84e548ee9cb85b8942860', 'ccfc95dc8d8c490a9eb7f0a4ba5ad545', 'get_order_status', 'unknown', "Check the status of the current order. Returns order ID, status, items, total, and ETA. Use when user asks 'where's my food?'", '{}', 1, None, '2026-02-15 09:02:35.127945', '2026-02-15 09:02:35.127948')
+2026-02-15 10:02:35,133 INFO sqlalchemy.engine.Engine COMMIT
+INFO:sqlalchemy.engine.Engine:COMMIT
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/test.db-journal. Running security scan...
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/test.db-journal.
+2026-02-15 10:02:35,138 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+2026-02-15 10:02:35,141 INFO sqlalchemy.engine.Engine SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+INFO:sqlalchemy.engine.Engine:SELECT bridges.id, bridges.user_id, bridges.name, bridges.slug, bridges.domain, bridges.target_url, bridges.extraction_schema, bridges.selectors, bridges.auth_config, bridges.interaction_script, bridges.session_data, bridges.status, bridges.last_successful_extraction, bridges.last_error, bridges.created_at, bridges.updated_at, bridges.has_webmcp, bridges.webmcp_tool_count 
+FROM bridges 
+WHERE bridges.id = ?
+2026-02-15 10:02:35,141 INFO sqlalchemy.engine.Engine [generated in 0.00034s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00034s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545',)
+2026-02-15 10:02:35,146 INFO sqlalchemy.engine.Engine SELECT webmcp_tools.bridge_id AS webmcp_tools_bridge_id, webmcp_tools.id AS webmcp_tools_id, webmcp_tools.tool_name AS webmcp_tools_tool_name, webmcp_tools.tool_type AS webmcp_tools_tool_type, webmcp_tools.description AS webmcp_tools_description, webmcp_tools.parameters_schema AS webmcp_tools_parameters_schema, webmcp_tools.is_available AS webmcp_tools_is_available, webmcp_tools.last_verified_at AS webmcp_tools_last_verified_at, webmcp_tools.created_at AS webmcp_tools_created_at, webmcp_tools.updated_at AS webmcp_tools_updated_at 
+FROM webmcp_tools 
+WHERE webmcp_tools.bridge_id IN (?)
+INFO:sqlalchemy.engine.Engine:SELECT webmcp_tools.bridge_id AS webmcp_tools_bridge_id, webmcp_tools.id AS webmcp_tools_id, webmcp_tools.tool_name AS webmcp_tools_tool_name, webmcp_tools.tool_type AS webmcp_tools_tool_type, webmcp_tools.description AS webmcp_tools_description, webmcp_tools.parameters_schema AS webmcp_tools_parameters_schema, webmcp_tools.is_available AS webmcp_tools_is_available, webmcp_tools.last_verified_at AS webmcp_tools_last_verified_at, webmcp_tools.created_at AS webmcp_tools_created_at, webmcp_tools.updated_at AS webmcp_tools_updated_at 
+FROM webmcp_tools 
+WHERE webmcp_tools.bridge_id IN (?)
+2026-02-15 10:02:35,146 INFO sqlalchemy.engine.Engine [generated in 0.00040s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545',)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00040s] ('ccfc95dc8d8c490a9eb7f0a4ba5ad545',)
+2026-02-15 10:02:35,152 INFO sqlalchemy.engine.Engine COMMIT
+INFO:security_watcher:File modified: /Users/obafemi/bridge/apps/api/test.db-journal. Running security scan...
+INFO:sqlalchemy.engine.Engine:COMMIT
+INFO:security_watcher:✅ No secrets found in /Users/obafemi/bridge/apps/api/test.db-journal.
+INFO:     127.0.0.1:49694 - "POST /api/v1/bridges/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49696 - "POST /api/v1/bridges/ccfc95dc-8d8c-490a-9eb7-f0a4ba5ad545/extract HTTP/1.1" 401 Unauthorized

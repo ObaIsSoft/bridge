@@ -59,9 +59,30 @@ class Bridge(Base):
     last_error = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Phase 6: WebMCP Integration
+    has_webmcp = Column(Boolean, default=False)
+    webmcp_tool_count = Column(Integer, default=0)
 
     owner = relationship("User", back_populates="bridges")
     usage_logs = relationship("UsageLog", back_populates="bridge", cascade="all, delete-orphan")
+    webmcp_tools = relationship("WebMCPTool", back_populates="bridge", cascade="all, delete-orphan")
+
+class WebMCPTool(Base):
+    __tablename__ = "webmcp_tools"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    bridge_id = Column(UUID(as_uuid=True), ForeignKey("bridges.id", ondelete="CASCADE"))
+    tool_name = Column(String(255), nullable=False)
+    tool_type = Column(String(50), nullable=False) # 'declarative' or 'imperative'
+    description = Column(Text, nullable=True)
+    parameters_schema = Column(JSON, nullable=True)
+    is_available = Column(Boolean, default=True)
+    last_verified_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    bridge = relationship("Bridge", back_populates="webmcp_tools")
 
 class UsageLog(Base):
     __tablename__ = "usage_logs"

@@ -72,60 +72,101 @@ class SchemaDiscoveryService:
     async def detect_official_api(self, url: str) -> Dict[str, Any]:
         """
         Surveyor: Detects if an official API exists for the target URL.
+        Also checks for WebMCP (Web Model Context Protocol) support.
         """
-        import tldextract
-        import aiohttp
-        
-        extracted = tldextract.extract(url)
-        domain = f"{extracted.domain}.{extracted.suffix}"
-        
-        candidates = [
-            f"https://api.{domain}",
-            f"https://developer.{domain}",
-            f"https://dev.{domain}",
-            f"https://docs.{domain}",
-            f"https://portal.{domain}",
-            f"https://platform.{domain}",
-            f"https://www.{domain}/developer",
-            f"https://www.{domain}/developers",
-            f"https://www.{domain}/docs",
-            f"https://www.{domain}/api",
-            f"https://{domain}/.well-known/openapi.json",
-            f"https://{domain}/swagger.json",
-            f"https://{domain}/api/docs"
-        ]
-        
-        found_apis = []
-        
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        }
-        
-        # Specific subdomains where a 403 usually means "It exists but is locked" (Strong signal)
-        strong_subdomains = ["api", "developer", "dev"]
+        try:
+            import tldextract
+            import aiohttp
+            from app.services.webmcp import WebMCPService
+            # from app.models import Bridge, WebMCPTool # Avoid circular import if possible, or use configured db session
+            
+            extracted = tldextract.extract(url)
+            domain = f"{extracted.domain}.{extracted.suffix}"
+            
+            # 1. Check for WebMCP (Browser Protocol)
+            webmcp_result = {
+                "has_webmcp": False,
+                "webmcp_tools": []
+            }
+            
+            try:
+                # We use a short timeout for discovery to not block too long
+                async with WebMCPService(headless=True) as webmcp:
+                    tools = await webmcp.discover_tools(url)
+                    if tools:
+                        webmcp_result["has_webmcp"] = True
+                        webmcp_result["webmcp_tools"] = tools
+                        logger.info(f"WebMCP detected on {url}: {len(tools)} tools")
+            except Exception as e:
+                logger.warning(f"WebMCP detection failed for {url}: {e}")
 
-        timeout = aiohttp.ClientTimeout(total=5)
-        conn = aiohttp.TCPConnector(limit=10, ssl=False) # Disable SSL verification for speed/compat
+            # 2. Check for Official APIs (DNS/Subdomain enumerator)
+            candidates = [
+                f"https://api.{domain}",
+                f"https://developer.{domain}",
+                f"https://dev.{domain}",
+                f"https://docs.{domain}",
+                f"https://portal.{domain}",
+                f"https://platform.{domain}",
+                f"https://www.{domain}/developer",
+                f"https://www.{domain}/developers",
+                f"https://www.{domain}/docs",
+                f"https://www.{domain}/api",
+                f"https://{domain}/.well-known/openapi.json",
+                f"https://{domain}/swagger.json",
+                f"https://{domain}/api/docs"
+            ]
+            
+            found_apis = []
+            
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+            
+            # Specific subdomains where a 403 usually means "It exists but is locked" (Strong signal)
+            strong_subdomains = ["api", "developer", "dev"]
 
-        async with aiohttp.ClientSession(headers=headers, timeout=timeout, connector=conn) as session:
-            for candidate in candidates:
-                try:
-                    # Switch to GET, but only read headers first
-                    async with session.get(candidate, allow_redirects=True) as resp:
-                        is_strong = any(s in candidate for s in strong_subdomains)
-                        
-                        # Accept 2xx/3xx OR 403 if it's a strong subdomain
-                        if resp.status < 400 or (resp.status == 403 and is_strong):
-                            found_apis.append(str(resp.url))
-                        else:
-                            logger.info(f"Candidate {candidate} returned status {resp.status}")
-                except Exception as e:
-                    # Ignore connection errors, but log them
-                    logger.debug(f"Failed to check {candidate}: {e}")
-                    continue
-                    
-        return {
-            "official_api_detected": len(found_apis) > 0,
-            "candidates": found_apis,
-            "recommendation": "Use Official API" if found_apis else "Proceed with Bridge"
-        }
+            timeout = aiohttp.ClientTimeout(total=5)
+            conn = aiohttp.TCPConnector(limit=10, ssl=False) # Disable SSL verification for speed/compat
+
+            async with aiohttp.ClientSession(headers=headers, timeout=timeout, connector=conn) as session:
+                for candidate in candidates:
+                    try:
+                        # Switch to GET, but only read headers first
+                        async with session.get(candidate, allow_redirects=True) as resp:
+                            is_strong = any(s in candidate for s in strong_subdomains)
+                            
+                            # Accept 2xx/3xx OR 403 if it's a strong subdomain
+                            if resp.status < 400 or (resp.status == 403 and is_strong):
+                                found_apis.append(str(resp.url))
+                            else:
+                                logger.info(f"Candidate {candidate} returned status {resp.status}")
+                    except Exception as e:
+                        # Ignore connection errors, but log them
+                        logger.debug(f"Failed to check {candidate}: {e}")
+                        continue
+            
+            # Determine recommendation
+            recommendation = "Proceed with Bridge"
+            if webmcp_result["has_webmcp"]:
+                recommendation = "Use WebMCP (Agent-Ready)"
+            elif found_apis:
+                recommendation = "Use Official API"
+                
+            return {
+                "official_api_detected": len(found_apis) > 0,
+                "candidates": found_apis,
+                "has_webmcp": webmcp_result["has_webmcp"],
+                "webmcp_tools": webmcp_result["webmcp_tools"],
+                "recommendation": recommendation
+            }
+        except Exception as e:
+            logger.error(f"Critical error in detective_official_api for {url}: {e}", exc_info=True)
+            return {
+                "official_api_detected": False,
+                "candidates": [],
+                "has_webmcp": False,
+                "webmcp_tools": [],
+                "recommendation": "Error during analysis",
+                "error": str(e)
+            }

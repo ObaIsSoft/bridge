@@ -21,7 +21,8 @@ export default function NewBridgePage() {
         name: '',
         target_url: '',
         extraction_schema: '{\n  "title": "string",\n  "url": "url"\n}',
-        selectors: '{}'
+        selectors: '{}',
+        webmcp_tools: [] as any[]
     });
     const [jsonError, setJsonError] = useState<string | null>(null);
 
@@ -36,7 +37,8 @@ export default function NewBridgePage() {
                 target_url: formData.target_url,
                 domain: new URL(formData.target_url).hostname,
                 extraction_schema: schema,
-                selectors: selectors
+                selectors: selectors,
+                webmcp_tools: formData.webmcp_tools
             });
             toast.success("Bridge created successfully!");
             router.push('/bridges');
@@ -47,182 +49,231 @@ export default function NewBridgePage() {
         }
     };
 
-    return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-in slide-in-from-right-4 duration-500">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Create New Bridge</h1>
-                <p className="text-muted-foreground">Turn any website into a structured API in seconds.</p>
-            </div>
+    // ... (render) ...
 
-            <form onSubmit={handleSubmit} className="grid gap-8 md:grid-cols-[1fr_300px]">
-                <div className="space-y-6">
-                    <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2">
-                            <Globe className="h-5 w-5 text-primary" />
-                            1. Target Details
-                        </h3>
-                        <div className="grid gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Bridge Name</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.name}
-                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="e.g., Hacker News Top Stories"
-                                    className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-ring"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Target URL</label>
-                                <input
-                                    type="url"
-                                    required
-                                    value={formData.target_url}
-                                    onChange={e => setFormData({ ...formData, target_url: e.target.value })}
-                                    placeholder="https://news.ycombinator.com"
-                                    className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-ring"
-                                />
+    <button
+        type="button"
+        onClick={async () => {
+            if (!formData.target_url) {
+                toast.error("Please enter a Target URL first");
+                return;
+            }
+            const toastId = toast.loading("Surveying target for official APIs...");
+            try {
+                // 1. Survey the target
+                const surveyResult = await bridgesApi.survey(formData.target_url);
+
+                if (surveyResult.official_api_detected) {
+                    toast.error(
+                        "OFFICIAL API DETECTED! Use Bridge Registry instead.",
+                        {
+                            id: toastId,
+                            description: `Found: ${surveyResult.candidates.join(', ')}`,
+                            duration: 8000
+                        }
+                    );
+                    return;
+                }
+
+                // Check for WebMCP
+                let webmcpMessage = "";
+                if (surveyResult.has_webmcp) {
+                    setFormData(prev => ({
+                        ...prev,
+                        webmcp_tools: surveyResult.webmcp_tools
+                    }));
+                    webmcpMessage = ` • WebMCP: Found ${surveyResult.webmcp_tools.length} tools!`;
+                }
+
+                // 2. Proceed to Analysis if no API found
+                toast.loading("No official API found. Analyzing page structure...", { id: toastId });
+                const result = await bridgesApi.analyze(formData.target_url);
+                setFormData(prev => ({
+                    ...prev,
+                    extraction_schema: JSON.stringify(result.schema, null, 2)
+                }));
+                toast.success(`Internal Bridge Approved: Schema generated.${webmcpMessage}`, { id: toastId });
+            } catch (err: any) {
+                toast.error("Analysis failed: " + (err.response?.data?.detail || err.message), { id: toastId });
+            }
+        }}
+
+        return (
+            <div className="max-w-4xl mx-auto space-y-8 animate-in slide-in-from-right-4 duration-500">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Create New Bridge</h1>
+                    <p className="text-muted-foreground">Turn any website into a structured API in seconds.</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="grid gap-8 md:grid-cols-[1fr_300px]">
+                    <div className="space-y-6">
+                        <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
+                            <h3 className="text-lg font-semibold flex items-center gap-2">
+                                <Globe className="h-5 w-5 text-primary" />
+                                1. Target Details
+                            </h3>
+                            <div className="grid gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Bridge Name</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.name}
+                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        placeholder="e.g., Hacker News Top Stories"
+                                        className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-ring"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Target URL</label>
+                                    <input
+                                        type="url"
+                                        required
+                                        value={formData.target_url}
+                                        onChange={e => setFormData({ ...formData, target_url: e.target.value })}
+                                        placeholder="https://news.ycombinator.com"
+                                        className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-ring"
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2">
-                            <Layout className="h-5 w-5 text-primary" />
-                            2. Data Schema
-                        </h3>
-                        <p className="text-xs text-muted-foreground">Define what data you want to extract. Our AI will handle the mapping.</p>
-                        <div className="relative">
-                            <textarea
-                                rows={6}
-                                required
-                                value={formData.extraction_schema}
-                                onChange={e => {
-                                    setFormData({ ...formData, extraction_schema: e.target.value });
-                                    try {
-                                        JSON.parse(e.target.value);
-                                        setJsonError(null);
-                                    } catch (err) {
-                                        setJsonError("Invalid JSON format");
-                                    }
-                                }}
-                                placeholder={`{
+                        <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
+                            <h3 className="text-lg font-semibold flex items-center gap-2">
+                                <Layout className="h-5 w-5 text-primary" />
+                                2. Data Schema
+                            </h3>
+                            <p className="text-xs text-muted-foreground">Define what data you want to extract. Our AI will handle the mapping.</p>
+                            <div className="relative">
+                                <textarea
+                                    rows={6}
+                                    required
+                                    value={formData.extraction_schema}
+                                    onChange={e => {
+                                        setFormData({ ...formData, extraction_schema: e.target.value });
+                                        try {
+                                            JSON.parse(e.target.value);
+                                            setJsonError(null);
+                                        } catch (err) {
+                                            setJsonError("Invalid JSON format");
+                                        }
+                                    }}
+                                    placeholder={`{
   "title": "string",
   "link": "url"
 }`}
-                                className={`w-full font-mono text-sm rounded-md border bg-background px-3 py-2 outline-none focus:ring-1 focus:ring-ring ${jsonError ? 'border-red-500 focus:ring-red-500' : ''}`}
-                            />
-                            {jsonError && (
-                                <span className="absolute bottom-2 right-2 text-[10px] text-red-500 font-bold bg-white/10 px-2 py-1 rounded">
-                                    {jsonError}
-                                </span>
-                            )}
+                                    className={`w-full font-mono text-sm rounded-md border bg-background px-3 py-2 outline-none focus:ring-1 focus:ring-ring ${jsonError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                                />
+                                {jsonError && (
+                                    <span className="absolute bottom-2 right-2 text-[10px] text-red-500 font-bold bg-white/10 px-2 py-1 rounded">
+                                        {jsonError}
+                                    </span>
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2">
-                            <Code className="h-5 w-5 text-primary" />
-                            3. Selectors (Optional)
-                        </h3>
-                        <p className="text-xs text-muted-foreground">Map schema fields to CSS selectors for precision.</p>
-                        <textarea
-                            rows={4}
-                            value={formData.selectors}
-                            onChange={e => setFormData({ ...formData, selectors: e.target.value })}
-                            placeholder={`{
+                        <div className="rounded-xl border bg-card p-6 shadow-sm space-y-4">
+                            <h3 className="text-lg font-semibold flex items-center gap-2">
+                                <Code className="h-5 w-5 text-primary" />
+                                3. Selectors (Optional)
+                            </h3>
+                            <p className="text-xs text-muted-foreground">Map schema fields to CSS selectors for precision.</p>
+                            <textarea
+                                rows={4}
+                                value={formData.selectors}
+                                onChange={e => setFormData({ ...formData, selectors: e.target.value })}
+                                placeholder={`{
   "title": ".post-title",
   "link": "a.storylink"
 }`}
-                            className="w-full font-mono text-sm rounded-md border bg-background px-3 py-2 outline-none focus:ring-1 focus:ring-ring"
-                        />
-                    </div>
+                                className="w-full font-mono text-sm rounded-md border bg-background px-3 py-2 outline-none focus:ring-1 focus:ring-ring"
+                            />
+                        </div>
 
-                    <div className="flex items-center justify-end gap-4">
-                        <button
-                            type="button"
-                            onClick={() => router.back()}
-                            className="px-4 py-2 text-sm font-medium rounded-md hover:bg-accent transition-colors">
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors disabled:opacity-50">
-                            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                            Save & Test Bridge
-                        </button>
-                    </div>
-                </div>
-
-                <div className="space-y-6">
-                    <div className="rounded-xl border bg-primary/5 p-6 shadow-sm border-primary/20">
-                        <h4 className="font-semibold flex items-center gap-2 text-primary">
-                            <Sparkles className="h-4 w-4" />
-                            AI Assistant
-                        </h4>
-                        <div className="mt-4 space-y-4 text-xs leading-relaxed text-muted-foreground">
-                            <p>Just paste the URL and I'll try to guess the schema for you.</p>
-                            <div className="p-3 bg-white rounded border border-dashed text-[10px] font-mono whitespace-pre overflow-hidden">
-                                {`Analyzing URL...
-Detected: List View
-Suggested Fields: 
-[title, url, timestamp]`}
-                            </div>
+                        <div className="flex items-center justify-end gap-4">
                             <button
                                 type="button"
-                                onClick={async () => {
-                                    if (!formData.target_url) {
-                                        toast.error("Please enter a Target URL first");
-                                        return;
-                                    }
-                                    const toastId = toast.loading("Surveying target for official APIs...");
-                                    try {
-                                        // 1. Survey the target
-                                        const surveyResult = await bridgesApi.survey(formData.target_url);
-
-                                        if (surveyResult.official_api_detected) {
-                                            toast.error(
-                                                "OFFICIAL API DETECTED! Use Bridge Registry instead.",
-                                                {
-                                                    id: toastId,
-                                                    description: `Found: ${surveyResult.candidates.join(', ')}`,
-                                                    duration: 8000
-                                                }
-                                            );
-                                            return;
-                                        }
-
-                                        // 2. Proceed to Analysis if no API found
-                                        toast.loading("No official API found. Analyzing page structure...", { id: toastId });
-                                        const result = await bridgesApi.analyze(formData.target_url);
-                                        setFormData(prev => ({
-                                            ...prev,
-                                            extraction_schema: JSON.stringify(result.schema, null, 2)
-                                        }));
-                                        toast.success("Internal Bridge Approved: Schema generated.", { id: toastId });
-                                    } catch (err: any) {
-                                        toast.error("Analysis failed: " + (err.response?.data?.detail || err.message), { id: toastId });
-                                    }
-                                }}
-                                className="w-full py-2 bg-primary text-primary-foreground rounded-md font-bold text-[10px] shadow-sm hover:bg-primary/90 transition-colors">
-                                RUN SURVEYOR & AUTO-FILL
+                                onClick={() => router.back()}
+                                className="px-4 py-2 text-sm font-medium rounded-md hover:bg-accent transition-colors">
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors disabled:opacity-50">
+                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                Save & Test Bridge
                             </button>
                         </div>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-orange-50 border border-orange-200">
-                        <h4 className="text-orange-900 font-semibold text-xs flex items-center gap-2">
-                            <Code className="h-3 w-3" />
-                            Developer Tip
-                        </h4>
-                        <p className="text-orange-800 text-[10px] mt-2 leading-relaxed">
-                            Use specific page URLs rather than landing pages for higher extraction accuracy on paginated data.
-                        </p>
+                    <div className="space-y-6">
+                        <div className="rounded-xl border bg-primary/5 p-6 shadow-sm border-primary/20">
+                            <h4 className="font-semibold flex items-center gap-2 text-primary">
+                                <Sparkles className="h-4 w-4" />
+                                AI Assistant
+                            </h4>
+                            <div className="mt-4 space-y-4 text-xs leading-relaxed text-muted-foreground">
+                                <p>Just paste the URL and I'll try to guess the schema for you.</p>
+                                <div className="p-3 bg-white rounded border border-dashed text-[10px] font-mono whitespace-pre overflow-hidden">
+                                    {`Analyzing URL...
+Detected: List View
+Suggested Fields: 
+[title, url, timestamp]`}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        if (!formData.target_url) {
+                                            toast.error("Please enter a Target URL first");
+                                            return;
+                                        }
+                                        const toastId = toast.loading("Surveying target for official APIs...");
+                                        try {
+                                            // 1. Survey the target
+                                            const surveyResult = await bridgesApi.survey(formData.target_url);
+
+                                            if (surveyResult.official_api_detected) {
+                                                toast.error(
+                                                    "OFFICIAL API DETECTED! Use Bridge Registry instead.",
+                                                    {
+                                                        id: toastId,
+                                                        description: `Found: ${surveyResult.candidates.join(', ')}`,
+                                                        duration: 8000
+                                                    }
+                                                );
+                                                return;
+                                            }
+
+                                            // 2. Proceed to Analysis if no API found
+                                            toast.loading("No official API found. Analyzing page structure...", { id: toastId });
+                                            const result = await bridgesApi.analyze(formData.target_url);
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                extraction_schema: JSON.stringify(result.schema, null, 2)
+                                            }));
+                                            toast.success("Internal Bridge Approved: Schema generated.", { id: toastId });
+                                        } catch (err: any) {
+                                            toast.error("Analysis failed: " + (err.response?.data?.detail || err.message), { id: toastId });
+                                        }
+                                    }}
+                                    className="w-full py-2 bg-primary text-primary-foreground rounded-md font-bold text-[10px] shadow-sm hover:bg-primary/90 transition-colors">
+                                    RUN SURVEYOR & AUTO-FILL
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-orange-50 border border-orange-200">
+                            <h4 className="text-orange-900 font-semibold text-xs flex items-center gap-2">
+                                <Code className="h-3 w-3" />
+                                Developer Tip
+                            </h4>
+                            <p className="text-orange-800 text-[10px] mt-2 leading-relaxed">
+                                Use specific page URLs rather than landing pages for higher extraction accuracy on paginated data.
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
-    );
+                </form>
+            </div>
+        );
 }

@@ -68,25 +68,56 @@ async def _perform_extraction(bridge_id: str, user_id: str):
                 logger.error(f"Bridge {bridge_id} not found for extraction task")
                 return {"status": "error", "message": "Bridge not found"}
 
-            crawler = CrawlerService()
-            extractor = ExtractionService()
+            data = None
+            used_source = "crawler"
 
-            html, new_session_data = await crawler.get_page_content(
-                url=bridge.target_url,
-                auth_config=bridge.auth_config,
-                interaction_script=bridge.interaction_script,
-                session_data=bridge.session_data
-            )
-            if not html:
-                raise Exception("Failed to crawl target URL")
-            
-            # Save new session data (Persist cookies for next run)
-            if new_session_data:
-                bridge.session_data = new_session_data
-                db.add(bridge) # Ensure update is tracked
-                logger.info(f"Updated session data for bridge {bridge.id}")
+            # 1. Try WebMCP (High Priority)
+            if bridge.has_webmcp:
+                try:
+                    logger.info(f"Bridge {bridge.id} has WebMCP. Attempting browser protocol extraction...")
+                    from app.services.webmcp import WebMCPService
+                    
+                    async with WebMCPService(headless=True) as webmcp:
+                        # Discover current tools (in case they changed)
+                        tools = await webmcp.discover_tools(bridge.target_url)
+                        
+                        # Simple heuristic: Look for 'extract', 'get_data', or 'scrape'
+                        target_tool = next((t for t in tools if t['name'] in ['extract', 'get_data', 'scrape', 'get_content']), None)
+                        
+                        if target_tool:
+                            logger.info(f"Executing WebMCP tool: {target_tool['name']}")
+                            result = await webmcp.execute_tool(bridge.target_url, target_tool['name'], {})
+                            if result.get('status') == 'success':
+                                data = result.get('result')
+                                used_source = "webmcp"
+                                logger.info(f"WebMCP extraction successful for {bridge.id}")
+                        else:
+                            logger.info("No suitable WebMCP extraction tool found. Falling back.")
+                            
+                except Exception as e:
+                    logger.warning(f"WebMCP extraction failed (fallback to crawler): {e}")
 
-            data = await extractor.extract_structured_data(html, bridge.extraction_schema)
+            # 2. Crawler Fallback (If WebMCP failed or yielded no data)
+            if not data:
+                crawler = CrawlerService()
+                extractor = ExtractionService()
+
+                html, new_session_data = await crawler.get_page_content(
+                    url=bridge.target_url,
+                    auth_config=bridge.auth_config,
+                    interaction_script=bridge.interaction_script,
+                    session_data=bridge.session_data
+                )
+                if not html:
+                    raise Exception("Failed to crawl target URL")
+                
+                # Save new session data (Persist cookies for next run)
+                if new_session_data:
+                    bridge.session_data = new_session_data
+                    db.add(bridge) # Ensure update is tracked
+                    logger.info(f"Updated session data for bridge {bridge.id}")
+
+                data = await extractor.extract_structured_data(html, bridge.extraction_schema, UUID(user_id))
             
             # 4. Deduplication (State Engine)
             from app.services.state import StateService
